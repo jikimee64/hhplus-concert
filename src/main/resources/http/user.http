@@ -1,0 +1,10 @@
+### 잔액 충전 API
+POST http://localhost:8080/v1/users/1/cash/charge
+Content-Type: application/json
+
+{
+  "amount": 1
+}
+
+### 잔액 조회 API
+GET http://localhost:8080/v1/users/1/cash

@@ -1,0 +1,38 @@
+### 유저 대기열 토큰 발급 API
+POST http://localhost:8080/v1/concerts/1/queue-token
+Content-Type: application/json
+
+{
+    "userId": 1
+}
+
+### 유저 대기열 확인 API
+GET http://localhost:8080/v1/concerts/1/queue
+Authorization: Bearer {token}
+
+### 예약 날짜 조회 API
+GET http://localhost:8080/v1/concerts/1/reservation/date?status=ACTIVE
+Authorization: Bearer {token}
+
+### 좌석 예약 조회 API
+GET http://localhost:8080/v1/concerts/1/reservation/seat?concertOpenDate=2024-01-01
+Authorization: Bearer {token}
+
+### 좌석 예약 요청 API
+POST http://localhost:8080/v1/concerts/1/reservation/seat/1
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "concertOpenDate": "2024-01-01"
+}
+
+### 결제 API
+POST http://localhost:8080/v1/concerts/1/purchase/seat/1
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "concertOpenDate": "2024-01-01",
+  "purchaseAmount": 10000
+}
