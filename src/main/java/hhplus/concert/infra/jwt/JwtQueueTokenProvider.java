@@ -14,4 +14,14 @@ public class JwtQueueTokenProvider implements QueueTokenProvider {
     public String createQueueToken(Long userId, Long waitingNumber) {
         return jwtUtil.createJwt(userId, waitingNumber);
     }
+
+    @Override
+    public Long getUserId(String queueToken) {
+        return jwtUtil.getUserId(queueToken);
+    }
+
+    @Override
+    public Long getWaitingNumber(String queueToken) {
+        return jwtUtil.getWaitingNumber(queueToken);
+    }
 }
