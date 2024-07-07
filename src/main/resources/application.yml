@@ -1,3 +1,8 @@
+spring:
+  jwt:
+    secret: 4c0bc59fdf5ce797e7f299280e17898d47117521d0bef19072a80e6613b0efffde5b8dcd0b6377119170918848556799fab6ad3f57775eb9501f2f55a12a430c
+    expiredMs: 86400000 # 1일
+
 springdoc:
   packages-to-scan: hhplus.concert.api.v1
   default-consumes-media-type: application/json;charset=UTF-8
