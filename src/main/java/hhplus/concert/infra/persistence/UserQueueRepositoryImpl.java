@@ -1,7 +1,8 @@
-package hhplus.concert.infra.persistencen;
+package hhplus.concert.infra.persistence;
 
 import hhplus.concert.domain.UserQueue;
 import hhplus.concert.domain.UserQueueRepository;
+import hhplus.concert.domain.UserQueueStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,11 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
         return userQueueJpaRepository.save(
             new UserQueue(userId, concertScheduleId)
         );
+    }
+
+    @Override
+    public List<UserQueue> findStatusIsProgressBy(Long concertScheduleId) {
+        return userQueueJpaRepository.findOrderByIdDescBy(concertScheduleId, UserQueueStatus.PROGRESS);
     }
 
     @Override

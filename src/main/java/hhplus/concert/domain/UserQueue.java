@@ -25,11 +25,20 @@ public class UserQueue {
 
     private LocalDateTime expiredAt;
 
-    public UserQueue(Long userId, Long concertScheduleId) {
+    public UserQueue(Long userId, Long concertScheduleId, UserQueueStatus status, LocalDateTime enteredAt, LocalDateTime expiredAt) {
         this.userId = userId;
         this.concertScheduleId = concertScheduleId;
-        this.status = UserQueueStatus.WAITING;
-        this.enteredAt = LocalDateTime.now();
+        this.status = status;
+        this.enteredAt = enteredAt;
+        this.expiredAt = expiredAt;
+    }
+
+    public UserQueue(Long userId, Long concertScheduleId, UserQueueStatus status) {
+        this(userId, concertScheduleId, status, LocalDateTime.now(), null);
+    }
+
+    public UserQueue(Long userId, Long concertScheduleId) {
+        this(userId, concertScheduleId, UserQueueStatus.WAITING, LocalDateTime.now(), null);
     }
 
     public Long getId() {

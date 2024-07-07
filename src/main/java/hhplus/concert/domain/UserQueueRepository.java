@@ -4,5 +4,6 @@ import java.util.List;
 
 public interface UserQueueRepository {
     UserQueue save(Long userId, Long concertScheduleId);
+    List<UserQueue> findStatusIsProgressBy(Long concertScheduleId);
     List<UserQueue> findAll();
 }
