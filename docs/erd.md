@@ -27,6 +27,7 @@ erDiagram
         int id PK "PK(결제 번호)"
         int user_id PK, FK
         int seat_id PK, FK
+        int price "결제 금액"
         varchar status "결제 상태(PROGRESS, DONE, CANCELED)"
         LocalDateTime created_at "결제 시간"
     }
