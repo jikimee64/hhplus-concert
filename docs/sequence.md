@@ -11,21 +11,21 @@ sequenceDiagram
     사용자 ->> API: 토큰 생성 API 요청
     API ->> 대기열: 대기열 토큰 생성 요청
     대기열 ->> 대기열: 대기열 토큰 생성(payload: 사용자 식별값, 대기열 순번)
+    Note over 대기열, 대기열: 대기열 순번은 PK값, 순번은 순차적이지 않을 수 있음
     대기열 -->> API: 대기열 토큰 반환
     API -->> 사용자: 토큰 반환
-    loop 대기번호 확인 API (5초마다 요청)
+    loop 대기열 순번 확인 API (5초마다 요청)
         사용자 ->> API: 토큰 적재하여 대기번호 확인 API 요청
         Note over 사용자, API: Authorization에 토큰적재
         API ->> 대기열: 대기번호 확인 요청
-        대기열 ->> 대기열: 대기열에 진입한 상태 중 max 대기열 순번 조회
-        alt
-            대기열 -->> 사용자: max 대기열 순번이 대기열 제한 인원보다 작을 경우 0 응답
-        else
+        대기열 ->> 대기열: 해당 콘서트의 대기열을 통과하여 활성화된 상태 모두 조회
+        alt 대기열 제한 인원을 초과하지 않아 대기열에서 기다리지 않고 통과할 수 있는 경우
+            대기열 -->> 대기열: 해당 대기열 토큰의 만료 시간을 현재시간 + 30분으로 업데이트
+            대기열 -->> 대기열: 해당 대기열 토큰의 진행 상태를 PROGRESS로 업데이트
+            대기열 -->> 사용자: 대기열을 기다리지 않아도 된다는 의미인 0 응답
+        else 제한 인원이 대기열에 꽉차 대기열을 기다려야 할 경우
             대기열 -->> 대기열: 요청한 사용자가 몇번째 대기 순번인지 토큰 payload에서 추출
-            opt 대기열 통과조건일 경우
-                대기열 -->> 대기열: 해당 대기열 토큰의 만료 시간을 현재시간 + 30분으로 업데이트
-            end
-            Note over 대기열, 대기열: (사용자 대기 번호) - ((대기열 제한 인원) + (max 대기열 순번))
+            Note over 대기열, 대기열: 대기열 상태값이 WAITING인 토큰의 전체 수 + 1
             대기열 -->> API: 몇번째 대기 순번인지 반환
             API -->> 사용자: 몇번째 대기 순번인지 반환
         end
@@ -41,6 +41,7 @@ sequenceDiagram
     participant API as API
     participant 날짜 as 날짜
     participant 대기열 as 대기열
+    participant 대기열 토큰 만료 스케줄러 as 대기열 토큰 만료 스케줄러
     사용자 ->> API: 예약 가능한 날짜 조회 API 요청
     Note over 사용자, API: Authorization에 토큰적재
     API -> 날짜: 예약 가능한 날짜 조회
@@ -51,6 +52,10 @@ sequenceDiagram
     else
         날짜 -->> API: 예약 가능한 날짜 조회 결과 반환
         API -->> 사용자: 예약 가능한 날짜 조회 결과 반환
+    end
+
+    rect rgba(0, 0, 255, .1)
+        대기열 토큰 만료 스케줄러 --> 대기열 토큰 만료 스케줄러: 대기열의 토큰 상태가 PROGRSS인 토큰 중 만료 시간값이 5분이 지났을 경우 EXPIRED로 업데이트
     end
 ```
 
@@ -63,6 +68,7 @@ sequenceDiagram
     participant API as API
     participant 좌석 as 좌석
     participant 대기열 as 대기열
+    participant 대기열 토큰 만료 스케줄러 as 대기열 토큰 만료 스케줄러
     사용자 ->> API: 특정 날짜의 예약 가능한 좌석 조회 API 요청
     Note over 사용자, API: Authorization에 대기열 토큰적재
     API -> 좌석: 특정 날짜의 예약 가능한 좌석 조회
@@ -74,6 +80,10 @@ sequenceDiagram
         좌석 -->> API: 특정 날짜의 예약 가능한 좌석 조회 결과 반환
         API -->> 사용자: 특정 날짜의 예약 가능한 좌석 조회 결과 반환
     end
+    rect rgba(0, 0, 255, .1)
+        대기열 토큰 만료 스케줄러 --> 대기열 토큰 만료 스케줄러: 대기열의 토큰 상태가 PROGRSS인 토큰 중 만료 시간값이 5분이 지났을 경우 EXPIRED로 업데이트
+    end
+
 ```
 
 ### 좌석 예약 요청 API
@@ -86,6 +96,7 @@ sequenceDiagram
     participant 좌석 as 좌석
     participant 대기열 as 대기열
     participant 좌석 임시 배정 스케줄러 as 좌석 임시 배정 스케줄러
+    participant 대기열 토큰 만료 스케줄러 as 대기열 토큰 만료 스케줄러
     사용자 ->> API: 날짜와 좌석 정보 입력하여 좌석 예약 API 요청
     Note over 사용자, API: Authorization에 토큰적재
     API ->> 좌석: 좌석 예약 요청
@@ -104,6 +115,9 @@ sequenceDiagram
     end
     rect rgba(0, 0, 255, .1)
         좌석 임시 배정 스케줄러 ->> 좌석 임시 배정 스케줄러: 좌석 상태가 임시 예약 된 좌석 중 임시 예약 직후 5분 이내에 결제 완료되지 않았을 경우 임시 배정 해제
+    end
+    rect rgba(0, 0, 255, .1)
+        대기열 토큰 만료 스케줄러 --> 대기열 토큰 만료 스케줄러: 대기열의 토큰 상태가 PROGRSS인 토큰 중 만료 시간값이 5분이 지났을 경우 EXPIRED로 업데이트
     end
 ```
 
@@ -151,6 +165,7 @@ sequenceDiagram
     participant 대기열 as 대기열
     participant 캐시 as 캐시
     participant 좌석 as 좌석
+    participant 대기열 토큰 만료 스케줄러 as 대기열 토큰 만료 스케줄러
     사용자 ->> API: 결제 요청
     API ->> 결제: 결제 요청
     결제 ->> 대기열: 대기열 상태값 조회
@@ -164,9 +179,12 @@ sequenceDiagram
         캐시 ->> 캐시: 잔액에서 결제 금액 차감
         캐시 -->> 결제: 잔액에서 결제 금액 차감 성공 응답
         결제 ->> 좌석: 임시 배정에서 배정 상태로 변경
-        결제 ->> 대기열: 유저 대기열 토큰 만료
+        결제 ->> 대기열: 대기열 상태 값을 DONE으로 업데이트
         결제 -->> 결제: 결제내역 영수증 생성
         결제 -->> API: 결제내역 영수증 반환
         API -->> 사용자: 결제내역 영수증 반환
+    end
+    rect rgba(0, 0, 255, .1)
+        대기열 토큰 만료 스케줄러 --> 대기열 토큰 만료 스케줄러: 대기열의 토큰 상태가 PROGRSS인 토큰 중 만료 시간값이 5분이 지났을 경우 EXPIRED로 업데이트
     end
 ```
