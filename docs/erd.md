@@ -27,6 +27,7 @@ erDiagram
         int id PK "PK(결제 번호)"
         int user_id PK, FK
         int seat_id PK, FK
+        int reservation_id PK, FK
         int price "결제 금액"
         varchar status "결제 상태(PROGRESS, DONE, CANCELED)"
         LocalDateTime created_at "결제 시간"
@@ -65,7 +66,7 @@ erDiagram
         int amount "좌석 금액"
         int position "좌석 번호"
         varchar status "예약 상태(TEMP_RESERVED, RESERVED)"
-        LocalDateTime created_at "예약 시간"
+        LocalDateTime reserved_at "예약 시간"
     }
 
     CONCERT ||--o{ CONCERT_SCHEDULE: "has schedules"
@@ -76,4 +77,5 @@ erDiagram
     CONCERT_SEAT ||--o{ PAYMENT: "is paid for"
     USER ||--o{ RESERVATION: "made reservation"
     CONCERT_SEAT ||--o{ RESERVATION: "is reserved"
+    RESERVATION ||--|| PAYMENT: "is paid"
 ```
