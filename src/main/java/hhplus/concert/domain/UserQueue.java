@@ -44,4 +44,12 @@ public class UserQueue {
     public Long getId() {
         return id;
     }
+
+    public LocalDateTime getExpiredAt() {
+        return expiredAt;
+    }
+
+    public UserQueueStatus getStatus() {
+        return status;
+    }
 }

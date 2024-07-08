@@ -8,7 +8,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
-    show-sql: true
+    show-sql: false
     properties:
       hibernate.format_sql: true
       hibernate.use_sql_comments: true

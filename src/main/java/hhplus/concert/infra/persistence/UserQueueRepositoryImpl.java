@@ -6,6 +6,7 @@ import hhplus.concert.domain.UserQueueStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -24,6 +25,11 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     @Override
     public List<UserQueue> findStatusIsProgressBy(Long concertScheduleId) {
         return userQueueJpaRepository.findOrderByIdDescBy(concertScheduleId, UserQueueStatus.PROGRESS);
+    }
+
+    @Override
+    public Integer updateStatusAndExpiredAt(UserQueueStatus status, LocalDateTime expiredAt, Long userId, Long concertScheduleId) {
+        return userQueueJpaRepository.updateStatusAndExpiredAt(status, expiredAt, userId, concertScheduleId);
     }
 
     @Override
