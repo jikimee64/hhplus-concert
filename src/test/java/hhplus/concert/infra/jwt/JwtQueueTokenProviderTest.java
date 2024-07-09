@@ -18,17 +18,8 @@ public class JwtQueueTokenProviderTest implements QueueTokenProvider {
     }
 
     @Override
-    public String createQueueToken(Long userId, Long waitingNumber) {
+    public String createQueueToken() {
         return queueToken;
     }
 
-    @Override
-    public Long getUserId(String queueToken) {
-        return userId;
-    }
-
-    @Override
-    public Long getWaitingNumber(String queueToken) {
-        return waitingNumber;
-    }
 }
