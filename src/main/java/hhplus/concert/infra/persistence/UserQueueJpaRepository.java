@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserQueueJpaRepository extends JpaRepository<UserQueue, Long> {
     @Query("SELECT uq FROM UserQueue uq WHERE uq.concertScheduleId =:concertScheduleId AND uq.status =:status order by uq.id desc")
@@ -19,12 +20,9 @@ public interface UserQueueJpaRepository extends JpaRepository<UserQueue, Long> {
             @Param("status") UserQueueStatus status
     );
 
-    @Query("SELECT uq FROM UserQueue uq WHERE uq.userId = :userId and uq.concertScheduleId =:concertScheduleId order by uq.id desc")
-    Page<UserQueue> findTopOrderByIdDescBy(
-            @Param("userId") Long userId,
-            @Param("concertScheduleId") Long concertScheduleId,
-            Pageable pageable
-    );
+    Optional<UserQueue> findByToken(String token);
+
+    Optional<UserQueue> findByUserIdAndConcertScheduleId(Long userId, Long concertScheduleId);
 
     @Modifying
     @Query("UPDATE UserQueue uq SET uq.expiredAt =:expiredAt, uq.status = :status WHERE uq.userId =:userId AND uq.concertScheduleId =:concertScheduleId")
