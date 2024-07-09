@@ -1,6 +1,7 @@
 package hhplus.concert.domain;
 
 import hhplus.concert.IntegrationTest;
+import hhplus.concert.api.support.ApiException;
 import hhplus.concert.infra.jwt.JwtQueueTokenProviderTest;
 import hhplus.concert.infra.persistence.UserQueueJpaRepository;
 import hhplus.concert.support.holder.TestTimeHolder;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -99,6 +101,21 @@ class UserQueueManagerTest extends IntegrationTest {
 
         // then
         assertThat(waitingNumber).isEqualTo(3L);
+    }
+
+    @Test
+    void 대기열_상태가_EXPIRED일_경우_예외가_발생한다() {
+        // given
+        Long userId = 1L;
+        Long concertScheduleId = 1L;
+        userQueueJpaRepository.save(new UserQueue(userId, concertScheduleId, UserQueueStatus.EXPIRED));
+        QueueTokenProvider queueTokenProvider = new JwtQueueTokenProviderTest(userId, 1L);
+        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, queueTokenProvider, timeHolder, userQueueConstant);
+
+        // when & then
+        assertThatThrownBy(() -> userQueueManager.validateTopExpiredBy(concertScheduleId, userId))
+                .isInstanceOf(ApiException.class)
+                .hasMessage("대기열 상태가 활성상태가 아닙니다.");
     }
 
     private void saveUserQueue() {

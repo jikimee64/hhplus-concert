@@ -1,5 +1,7 @@
 package hhplus.concert.domain;
 
+import hhplus.concert.api.support.ApiException;
+import hhplus.concert.api.support.error.ErrorCode;
 import hhplus.concert.support.holder.TimeHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -36,7 +38,7 @@ public class UserQueueManager {
         /**
          * 대기열을 통과할 수 있을 경우 대기열 토큰 진행 상태 = PROGRESS, 만료 시간 =  현재시간 + 30분 업데이트 후 0을 반환
          */
-        if(progressingUserQueues.size() < userQueueConstant.getMaxWaitingNumber()){
+        if (progressingUserQueues.size() < userQueueConstant.getMaxWaitingNumber()) {
             LocalDateTime expiredAt = timeHolder.currentDateTime().plusMinutes(userQueueConstant.getQueueTokenExpireTime());
             userQueueRepository.updateStatusAndExpiredAt(UserQueueStatus.PROGRESS, expiredAt, userId, concertScheduleId);
             return 0;
@@ -47,5 +49,13 @@ public class UserQueueManager {
          */
         List<UserQueue> waitingUserQueues = userQueueRepository.findStatusIsWaitingBy(concertScheduleId);
         return waitingUserQueues.size() + 1;
+    }
+
+    @Transactional(readOnly = true)
+    public void validateTopExpiredBy(Long concertScheduleId, Long userId) {
+        UserQueue userQueue = userQueueRepository.findTopBy(concertScheduleId, userId);
+        if (userQueue.isExpired()) {
+            throw new ApiException(ErrorCode.E001);
+        }
     }
 }

@@ -41,6 +41,10 @@ public class UserQueue {
         this(userId, concertScheduleId, UserQueueStatus.WAITING, LocalDateTime.now(), null);
     }
 
+    public boolean isExpired() {
+        return this.status == UserQueueStatus.EXPIRED;
+    }
+
     public Long getId() {
         return id;
     }
