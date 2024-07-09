@@ -14,7 +14,7 @@ spring:
     show-sql: false
     properties:
       hibernate.format_sql: true
-      hibernate.use_sql_comments: true
+      hibernate.use_sql_comments: false
     defer-datasource-initialization: true
   datasource:
     driver-class-name: org.h2.Driver

@@ -46,4 +46,8 @@ public class ConcertSchedule {
     public ConcertSchedule(Long concertId, LocalDate openDate, LocalDateTime startAt, LocalDateTime endAt, Integer totalSeat) {
         this(concertId, openDate, startAt, endAt, totalSeat, TotalSeatStatus.AVAILABLE);
     }
+
+    public Long getId() {
+        return id;
+    }
 }

@@ -154,14 +154,12 @@
 
 ### 좌석 예약 조회 API
 
-선택한 날짜의 좌석 정보를 조회한다.
+선택한 콘서트 스케줄의 좌석 정보를 조회한다.
 
-- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat?concertOpenDate=2024-01-01`
+- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat
 - **Method:** `GET`
 - **URL Params:**
     - `concertScheduleId=[integer]` (required) 콘서트 스케줄 고유값
-- **Query Params:**
-    - `concertOpenDate=[string]` (required) 콘서트 개최 날짜 (2024-01-01)
 - **Headers:**
     - `Authorization: Bearer QUEUE_TOKEN`
 - **Success Response:**
