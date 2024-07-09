@@ -9,21 +9,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class UserQueueManager {
 
     private final UserQueueRepository userQueueRepository;
-    private final QueueTokenProvider queueTokenProvider;
+    private final UserQueueTokenProvider userQueueTokenProvider;
     private final TimeHolder timeHolder;
     private final UserQueueConstant userQueueConstant;
 
     @Transactional
     public String enterUserQueue(Long concertScheduleId, Long userId) {
-        UserQueue savedUserQueue = userQueueRepository.save(concertScheduleId, userId);
-        Long waitingNumber = savedUserQueue.getId();
-        return queueTokenProvider.createQueueToken(userId, waitingNumber);
+        Optional<UserQueue> optUserQueue = userQueueRepository.findBy(concertScheduleId, userId);
+        if (optUserQueue.isPresent()) {
+            return optUserQueue.get().getToken();
+        }
+        String queueToken = userQueueTokenProvider.createQueueToken();
+        userQueueRepository.save(concertScheduleId, userId, queueToken);
+        return queueToken;
     }
 
     /**
@@ -52,8 +57,8 @@ public class UserQueueManager {
     }
 
     @Transactional(readOnly = true)
-    public void validateTopExpiredBy(Long concertScheduleId, Long userId) {
-        UserQueue userQueue = userQueueRepository.findTopBy(concertScheduleId, userId);
+    public void validateTopExpiredBy(String token) {
+        UserQueue userQueue = userQueueRepository.findByOrElseThrow(token);
         if (userQueue.isExpired()) {
             throw new ApiException(ErrorCode.E001);
         }

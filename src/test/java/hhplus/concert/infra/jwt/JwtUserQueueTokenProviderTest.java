@@ -1,18 +1,18 @@
 package hhplus.concert.infra.jwt;
 
-import hhplus.concert.domain.QueueTokenProvider;
+import hhplus.concert.domain.UserQueueTokenProvider;
 
-public class JwtQueueTokenProviderTest implements QueueTokenProvider {
+public class JwtUserQueueTokenProviderTest implements UserQueueTokenProvider {
 
     private String queueToken;
     private Long userId;
     private Long waitingNumber;
 
-    public JwtQueueTokenProviderTest(String queueToken) {
+    public JwtUserQueueTokenProviderTest(String queueToken) {
         this.queueToken = queueToken;
     }
 
-    public JwtQueueTokenProviderTest(Long userId, Long waitingNumber) {
+    public JwtUserQueueTokenProviderTest(Long userId, Long waitingNumber) {
         this.userId = userId;
         this.waitingNumber = waitingNumber;
     }

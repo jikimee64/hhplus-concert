@@ -1,13 +1,12 @@
-package hhplus.concert.infra.jwt;
+package hhplus.concert.infra.tokenprovider;
 
-import hhplus.concert.domain.QueueTokenProvider;
-import lombok.RequiredArgsConstructor;
+import hhplus.concert.domain.UserQueueTokenProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
-public class UuidQueueTokenProvider implements QueueTokenProvider {
+public class UuidUserQueueTokenProvider implements UserQueueTokenProvider {
 
     @Override
     public String createQueueToken() {

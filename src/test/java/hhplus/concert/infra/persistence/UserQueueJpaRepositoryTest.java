@@ -42,31 +42,6 @@ class UserQueueJpaRepositoryTest extends IntegrationTest {
                 );
     }
 
-    @Test
-    void 특정_콘서트의_유저의_가장_최신_대기열_토큰을_조회한다() {
-        // given
-        userQueueJpaRepository.saveAll(
-                List.of(
-                        new UserQueue(1L, 1L, UserQueueStatus.PROGRESS),
-                        new UserQueue(2L, 1L, UserQueueStatus.PROGRESS),
-                        new UserQueue(1L, 1L, UserQueueStatus.DONE),
-                        new UserQueue(1L, 1L, UserQueueStatus.WAITING)
-                )
-        );
-        Long userId = 1L;
-        Long concertScheduleId = 1L;
-
-        // when
-        UserQueue userQueue = userQueueJpaRepository.findTopOrderByIdDescBy(
-                userId,
-                concertScheduleId,
-                PageRequest.of(0, 1)
-        ).getContent().get(0);
-
-        // then
-        assertThat(userQueue.getStatus()).isEqualTo(UserQueueStatus.WAITING);
-    }
-
     private void saveUserQueue() {
         userQueueJpaRepository.saveAll(
                 List.of(

@@ -1,5 +1,5 @@
 package hhplus.concert.domain;
 
-public interface QueueTokenProvider {
+public interface UserQueueTokenProvider {
     String createQueueToken();
 }

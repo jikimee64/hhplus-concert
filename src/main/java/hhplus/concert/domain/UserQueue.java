@@ -18,6 +18,8 @@ public class UserQueue {
 
     private Long concertScheduleId;
 
+    private String token;
+
     @Enumerated(EnumType.STRING)
     private UserQueueStatus status;
 
@@ -25,20 +27,25 @@ public class UserQueue {
 
     private LocalDateTime expiredAt;
 
-    public UserQueue(Long userId, Long concertScheduleId, UserQueueStatus status, LocalDateTime enteredAt, LocalDateTime expiredAt) {
+    public UserQueue(Long userId, Long concertScheduleId, String token, UserQueueStatus status, LocalDateTime enteredAt, LocalDateTime expiredAt) {
         this.userId = userId;
         this.concertScheduleId = concertScheduleId;
+        this.token = token;
         this.status = status;
         this.enteredAt = enteredAt;
         this.expiredAt = expiredAt;
     }
 
-    public UserQueue(Long userId, Long concertScheduleId, UserQueueStatus status) {
-        this(userId, concertScheduleId, status, LocalDateTime.now(), null);
+    public UserQueue(Long userId, Long concertScheduleId, String token, UserQueueStatus status) {
+        this(userId, concertScheduleId, token, status, LocalDateTime.now(), null);
     }
 
-    public UserQueue(Long userId, Long concertScheduleId) {
-        this(userId, concertScheduleId, UserQueueStatus.WAITING, LocalDateTime.now(), null);
+    public UserQueue(Long userId, Long concertScheduleId, UserQueueStatus status) {
+        this(userId, concertScheduleId, "", status, LocalDateTime.now(), null);
+    }
+
+    public UserQueue(Long userId, Long concertScheduleId, String token) {
+        this(userId, concertScheduleId, token, UserQueueStatus.WAITING, LocalDateTime.now(), null);
     }
 
     public boolean isExpired() {
@@ -55,5 +62,9 @@ public class UserQueue {
 
     public UserQueueStatus getStatus() {
         return status;
+    }
+
+    public String getToken() {
+        return token;
     }
 }
