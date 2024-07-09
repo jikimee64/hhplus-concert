@@ -12,12 +12,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserQueueManager {
 
-    private final Long MAX_WAITING_NUMBER = 100L;
-    private final Long QUEUE_TOKEN_EXPIRE_TIME_MINUTE = 30L;
-
     private final UserQueueRepository userQueueRepository;
     private final QueueTokenProvider queueTokenProvider;
     private final TimeHolder timeHolder;
+    private final UserQueueConstant userQueueConstant;
 
     @Transactional
     public String enterUserQueue(Long concertScheduleId, Long userId) {
@@ -32,18 +30,22 @@ public class UserQueueManager {
      * - 대기열이 꽉 찼을 경우 대기 순번을 계산하여 반환
      */
     @Transactional
-    public Long selectWaitingNumber(Long concertScheduleId, Long userId) {
-        List<UserQueue> userQueues = userQueueRepository.findStatusIsProgressBy(concertScheduleId);
+    public Integer selectWaitingNumber(Long concertScheduleId, Long userId) {
+        List<UserQueue> progressingUserQueues = userQueueRepository.findStatusIsProgressBy(concertScheduleId);
 
         /**
          * 대기열을 통과할 수 있을 경우 대기열 토큰 진행 상태 = PROGRESS, 만료 시간 =  현재시간 + 30분 업데이트 후 0을 반환
          */
-        if(userQueues.size() < MAX_WAITING_NUMBER){
-            LocalDateTime expiredAt = timeHolder.currentDateTime().plusMinutes(QUEUE_TOKEN_EXPIRE_TIME_MINUTE);
+        if(progressingUserQueues.size() < userQueueConstant.getMaxWaitingNumber()){
+            LocalDateTime expiredAt = timeHolder.currentDateTime().plusMinutes(userQueueConstant.getQueueTokenExpireTime());
             userQueueRepository.updateStatusAndExpiredAt(UserQueueStatus.PROGRESS, expiredAt, userId, concertScheduleId);
-            return 0L;
+            return 0;
         }
 
-        return 1L;
+        /**
+         * 대기열이 꽉 찼을 경우 대기 순번을 계산하여 반환
+         */
+        List<UserQueue> waitingUserQueues = userQueueRepository.findStatusIsWaitingBy(concertScheduleId);
+        return waitingUserQueues.size() + 1;
     }
 }

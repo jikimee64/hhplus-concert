@@ -28,6 +28,9 @@ class UserQueueManagerTest extends IntegrationTest {
     private EntityManager entityManager;
 
     @Autowired
+    private UserQueueConstant userQueueConstant;
+
+    @Autowired
     private UserQueueJpaRepository userQueueJpaRepository;
 
     private TimeHolder timeHolder = new TestTimeHolder();
@@ -37,7 +40,7 @@ class UserQueueManagerTest extends IntegrationTest {
         // given
         String testQueueToken = "testQueueToken";
         QueueTokenProvider queueTokenProvider = new JwtQueueTokenProviderTest(testQueueToken);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, queueTokenProvider, timeHolder);
+        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, queueTokenProvider, timeHolder, userQueueConstant);
         Long userId = 1L;
         Long concertScheduleId = 1L;
 
@@ -53,7 +56,7 @@ class UserQueueManagerTest extends IntegrationTest {
     }
 
     @Test
-    void 제한인원이_50명인_큐에서_PROGRESS_상태인_대기열이_50명_미만일_경우_상태값과_만료시간을_업데이트_후_대기순번_0을_반환한다() {
+    void 제한인원이_5명인_큐에서_PROGRESS_상태인_대기열이_5명_미만일_경우_상태값과_만료시간을_업데이트_후_대기순번_0을_반환한다() {
         // given
         Long userId = 1L;
         Long userWaitingNumber = 51L;
@@ -64,10 +67,10 @@ class UserQueueManagerTest extends IntegrationTest {
 
         TimeHolder testTimeHolder = new TestTimeHolder(dateTime);
         QueueTokenProvider queueTokenProvider = new JwtQueueTokenProviderTest(userId, userWaitingNumber);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, queueTokenProvider, testTimeHolder);
+        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, queueTokenProvider, testTimeHolder, userQueueConstant);
 
         // when
-        Long waitingNumber = userQueueManager.selectWaitingNumber(concertScheduleId, userId);
+        Integer waitingNumber = userQueueManager.selectWaitingNumber(concertScheduleId, userId);
 
         entityManager.clear(); // 디비에 업데이트 된 값을 가져오기 위해 영속성 컨텍스트 초기화
 
@@ -81,21 +84,35 @@ class UserQueueManagerTest extends IntegrationTest {
         );
     }
 
-    @Disabled
     @Test
-    void 제한인원이_50명인_큐에서_PROGRESS_상태인_마지막_대기열_번호가_50번이고_유저의_대기열_번호가_51일_경우_대기순번_1을_반환한다() {
+    void 제한인원이_5명인_큐에서_5명이_PROGRESS이고_2명이_WAITING인_경우_대기순번_3을_반환한다() {
         // given
+        saveUserQueue();
         Long userId = 1L;
-        Long userWaitingNumber = 51L;
-        QueueTokenProvider queueTokenProvider = new JwtQueueTokenProviderTest(userId, userWaitingNumber);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, queueTokenProvider, timeHolder);
+        Long userQueuePk = 10L;
+        QueueTokenProvider queueTokenProvider = new JwtQueueTokenProviderTest(userId, userQueuePk);
+        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, queueTokenProvider, timeHolder, userQueueConstant);
         Long concertScheduleId = 1L;
 
         // when
-        Long waitingNumber = userQueueManager.selectWaitingNumber(concertScheduleId, userId);
+        Integer waitingNumber = userQueueManager.selectWaitingNumber(concertScheduleId, userId);
 
         // then
-        assertThat(waitingNumber).isEqualTo(1L);
+        assertThat(waitingNumber).isEqualTo(3L);
+    }
+
+    private void saveUserQueue() {
+        userQueueJpaRepository.saveAll(
+                List.of(
+                        new UserQueue(1L, 1L, UserQueueStatus.PROGRESS),
+                        new UserQueue(2L, 1L, UserQueueStatus.PROGRESS),
+                        new UserQueue(3L, 1L, UserQueueStatus.PROGRESS),
+                        new UserQueue(4L, 1L, UserQueueStatus.PROGRESS),
+                        new UserQueue(5L, 1L, UserQueueStatus.PROGRESS),
+                        new UserQueue(6L, 1L, UserQueueStatus.WAITING),
+                        new UserQueue(7L, 1L, UserQueueStatus.WAITING)
+                )
+        );
     }
 
 }
