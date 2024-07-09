@@ -98,29 +98,33 @@
 
 콘서트의 예약 가능한 날짜를 조회한다.
 
-- **URL:** `/v1/concerts/{concertScheduleId}/reservation/date?status=AVAILABLE`
+- **URL:** `/v1/concerts/{concertId}/reservation/date?status=AVAILABLE`
 - **Method:** `GET`
 - **Headers:**
     - `Authorization: Bearer QUEUE_TOKEN`
 - **URL Params:**
-    - `concertScheduleId=[integer]` (required) 콘서트 스케줄 고유값
+    - `concertId=[integer]` (required) 콘서트 고유값
 - **Query Params:**
     - `status=[string]` (required) 예약 가능 상태값 (AVAILABLE(기본값), SOLD_OUT)
-- **Success Response:**
-    - **Code:** 200 OK
-    - **Content:**
-    ```json
-      {
-          "result": "SUCCESS",
-          "data": {
-            "date": [
-              "2024-01-01",
-              "2024-01-02"
-            ]
-          },
-          "error": {}
-      }
-    ```
+      - **Success Response:**
+          - **Code:** 200 OK
+          - **Content:**
+          ```json
+            {
+                "result": "SUCCESS",
+                "data": {
+                  "concerts": [
+                        {
+                          "scheduleId": 1,
+                          "openDate": "2024-01-01",
+                          "startAt": "2024-01-01 00:00:00",
+                          "endAt": "2024-01-01 01:00:00"
+                        }
+                  ]
+                },
+                "error": {}
+            }
+          ```
 - **Error Response:**
     - **Code:** 200 OK
     - **Content:**
