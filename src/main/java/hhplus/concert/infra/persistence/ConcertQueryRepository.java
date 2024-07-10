@@ -31,7 +31,7 @@ public class ConcertQueryRepository {
                 )
                 .from(concertSchedule)
                 .leftJoin(concertSeat).on(concertSchedule.id.eq(concertSeat.concertScheduleId).and(concertSeat.id.isNotNull()))
-                .leftJoin(reservation).on(concertSeat.id.eq(reservation.concertSeatId).and(reservation.id.isNotNull()))
+                .leftJoin(reservation).on(concertSeat.id.eq(reservation.seatId).and(reservation.id.isNotNull()))
                 .where(
                         concertSchedule.id.eq(concertScheduleId)
                 )

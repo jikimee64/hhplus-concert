@@ -15,7 +15,9 @@ public class ConcertSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long concertId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "concert_id")
+    private Concert concert;
 
     private LocalDate openDate;
 
@@ -29,9 +31,9 @@ public class ConcertSchedule {
     @Enumerated(EnumType.STRING)
     private TotalSeatStatus status;
 
-    public ConcertSchedule(Long id, Long concertId, LocalDate openDate, LocalDateTime startAt, LocalDateTime endAt, Integer totalSeat, TotalSeatStatus status) {
+    public ConcertSchedule(Long id, Concert concert, LocalDate openDate, LocalDateTime startAt, LocalDateTime endAt, Integer totalSeat, TotalSeatStatus status) {
         this.id = id;
-        this.concertId = concertId;
+        this.concert = concert;
         this.openDate = openDate;
         this.startAt = startAt;
         this.endAt = endAt;
@@ -39,15 +41,40 @@ public class ConcertSchedule {
         this.status = status;
     }
 
-    public ConcertSchedule(Long concertId, LocalDate openDate, LocalDateTime startAt, LocalDateTime endAt, Integer totalSeat, TotalSeatStatus status) {
-        this(null, concertId, openDate, startAt, endAt, totalSeat, status);
+    public ConcertSchedule(Concert concert, LocalDate openDate, LocalDateTime startAt, LocalDateTime endAt, Integer totalSeat, TotalSeatStatus status) {
+        this(null, concert, openDate, startAt, endAt, totalSeat, status);
     }
 
-    public ConcertSchedule(Long concertId, LocalDate openDate, LocalDateTime startAt, LocalDateTime endAt, Integer totalSeat) {
-        this(concertId, openDate, startAt, endAt, totalSeat, TotalSeatStatus.AVAILABLE);
+    public ConcertSchedule(Concert concert, LocalDate openDate, LocalDateTime startAt, LocalDateTime endAt, Integer totalSeat) {
+        this(concert, openDate, startAt, endAt, totalSeat, TotalSeatStatus.AVAILABLE);
     }
 
     public Long getId() {
         return id;
     }
+
+    public Concert getConcert() {
+        return concert;
+    }
+
+    public TotalSeatStatus getStatus() {
+        return status;
+    }
+
+    public Integer getTotalSeat() {
+        return totalSeat;
+    }
+
+    public LocalDateTime getEndAt() {
+        return endAt;
+    }
+
+    public LocalDateTime getStartAt() {
+        return startAt;
+    }
+
+    public LocalDate getOpenDate() {
+        return openDate;
+    }
+
 }

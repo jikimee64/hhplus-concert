@@ -235,6 +235,7 @@
     - **Content:**
       ```json
       {
+        "userId": 1,
         "concertOpenDate": "2024-01-01"
       }
       ```
@@ -287,6 +288,19 @@
           }
         }
       ```
+
+  - **Code:** 200 OK
+      - **Content:**
+        ```json
+          {
+            "result": "FAIL",
+            "data": {},
+            "error": {
+              "code": "006",
+              "message": "콘서트 개최 날짜가 일치하지 않습니다."
+            }
+          }
+        ```
 
 ### 잔액 충전 API
 
