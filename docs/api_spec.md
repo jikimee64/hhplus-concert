@@ -306,7 +306,7 @@
 
 - 잔액을 충전한다
 
-- **URL:** `/v1/users/{userId}/cash/charge`
+- **URL:** `/v1/users/{userId}/amount/charge`
 - **Method:** `POST`
 - **URL Params:**
     - `userId=[integer]` (required) 유저 고유값
@@ -327,25 +327,12 @@
             "error": {}
         }
       ```
-- **Error Response:**
-    - **Code:** 200 OK
-    - **Content:**
-      ```json
-        {
-          "result": "FAIL",
-          "data": {},
-          "error": {
-            "code": "003",
-            "message": "충전 금액은 0이상 가능합니다."
-          }
-        }
-      ```
 
 ### 잔액 조회 API
 
 - 잔액을 조회한다
 
-- **URL:** `/v1/users/{userId}/cash`
+- **URL:** `/v1/users/{userId}/amount`
 - **Method:** `GET`
 - **URL Params:**
     - `userId=[integer]` (required) 유저 고유값
@@ -356,7 +343,7 @@
         {
             "result": "SUCCESS",
             "data": {
-              "cash": 10000
+              "amount": 10000
             },
             "error": {}
         }

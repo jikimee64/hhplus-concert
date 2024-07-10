@@ -16,4 +16,28 @@ public class User {
     private Long id;
 
     private String userId;
+
+    private int amount;
+
+    public User(Long id, String userId, int amount) {
+        this.id = id;
+        this.userId = userId;
+        this.amount = amount;
+    }
+
+    public User(String userId) {
+        this(null, userId, 0);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void addAmount(int amount) {
+        this.amount += amount;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
 }
