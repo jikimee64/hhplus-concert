@@ -42,6 +42,8 @@ public class Reservation {
 
     private ReservationStatus status;
 
+    private LocalDateTime reservedAt;
+
     public Reservation(Long id, Long userId, Long seatId, ReservationStatus status) {
         this.id = id;
         this.userId = userId;
@@ -49,8 +51,15 @@ public class Reservation {
         this.status = status;
     }
 
-    public Reservation(Long userId, Long concertSeatId, ReservationStatus status) {
-        this(null, userId, concertSeatId, status);
+    public Reservation(Long userId, Long seatId, ReservationStatus status) {
+        this(null, userId, seatId, status);
+    }
+
+    public Reservation(Long userId, Long seatId, ReservationStatus status, LocalDateTime reservedAt) {
+        this.userId = userId;
+        this.seatId = seatId;
+        this.status = status;
+        this.reservedAt = reservedAt;
     }
 
     public Long getId() {

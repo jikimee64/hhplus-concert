@@ -6,6 +6,7 @@ import hhplus.concert.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +49,16 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     @Override
     public Reservation saveReservation(Reservation reservation) {
         return reservationJpaRepository.save(reservation);
+    }
+
+    @Override
+    public List<Reservation> findReservationReleaseTarget(LocalDateTime expiredAt) {
+        return concertQueryRepository.findReservationReleaseTarget(expiredAt);
+    }
+
+    @Override
+    public void deleteReservation(List<Reservation> reservations) {
+        reservationJpaRepository.deleteAllInBatch(reservations);
     }
 
 }

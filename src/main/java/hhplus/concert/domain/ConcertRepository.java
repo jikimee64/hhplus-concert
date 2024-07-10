@@ -1,5 +1,6 @@
 package hhplus.concert.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,4 +11,6 @@ public interface ConcertRepository {
     ConcertSeat findSeat(Long seatId);
     ConcertSchedule findConcertSchedule(Long concertScheduleId);
     Reservation saveReservation(Reservation reservation);
+    List<Reservation> findReservationReleaseTarget(LocalDateTime expiredAt);
+    void deleteReservation(List<Reservation> reservations);
 }
