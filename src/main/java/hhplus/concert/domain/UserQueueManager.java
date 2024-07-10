@@ -37,7 +37,7 @@ public class UserQueueManager {
      * - 대기열이 꽉 찼을 경우 대기 순번을 계산하여 반환
      */
     @Transactional
-    public Integer selectWaitingNumber(Long concertScheduleId, Long userId) {
+    public Integer selectWaitingNumber(String token, Long concertScheduleId, Long userId) {
         List<UserQueue> progressingUserQueues = userQueueRepository.findStatusIsProgressBy(concertScheduleId);
 
         /**
@@ -51,8 +51,11 @@ public class UserQueueManager {
 
         /**
          * 대기열이 꽉 찼을 경우 대기 순번을 계산하여 반환
+         * - 대기 상태가 WAITING이며 요청한 유저보다 진입 시점이 적은 토큰 조회
+         * - 대기 순번 = 조회된 토큰 수 + 1
          */
-        List<UserQueue> waitingUserQueues = userQueueRepository.findStatusIsWaitingBy(concertScheduleId);
+        UserQueue userQueue = userQueueRepository.findByOrElseThrow(token);
+        List<UserQueue> waitingUserQueues = userQueueRepository.findStatusIsWaitingAndAlreadyEnteredBy(concertScheduleId, userQueue.getEnteredAt());
         return waitingUserQueues.size() + 1;
     }
 

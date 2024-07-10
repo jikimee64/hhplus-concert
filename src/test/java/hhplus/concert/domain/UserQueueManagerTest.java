@@ -93,7 +93,7 @@ class UserQueueManagerTest extends IntegrationTest {
         UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, testTimeHolder, userQueueConstant);
 
         // when
-        Integer waitingNumber = userQueueManager.selectWaitingNumber(concertScheduleId, userId);
+        Integer waitingNumber = userQueueManager.selectWaitingNumber("", concertScheduleId, userId);
 
         entityManager.clear(); // 디비에 업데이트 된 값을 가져오기 위해 영속성 컨텍스트 초기화
 
@@ -108,17 +108,33 @@ class UserQueueManagerTest extends IntegrationTest {
     }
 
     @Test
-    void 제한인원이_5명인_큐에서_5명이_PROGRESS이고_2명이_WAITING인_경우_대기순번_3을_반환한다() {
+    void 제한인원이_5명인_큐에서_5명이_PROGRESS이고_먼저_진입한_2개의_토큰상태가_WAITING인_경우_대기순번_3을_반환한다() {
         // given
-        saveUserQueue();
+        LocalDateTime now = LocalDateTime.now();
+        userQueueJpaRepository.saveAll(
+                List.of(
+                        new UserQueue(1L, 1L, "", now, UserQueueStatus.PROGRESS),
+                        new UserQueue(2L, 1L, "", now.plusSeconds(1L), UserQueueStatus.PROGRESS),
+                        new UserQueue(3L, 1L, "", now.plusSeconds(2L), UserQueueStatus.PROGRESS),
+                        new UserQueue(4L, 1L, "", now.plusSeconds(3L), UserQueueStatus.PROGRESS),
+                        new UserQueue(5L, 1L, "", now.plusSeconds(4L), UserQueueStatus.PROGRESS),
+                        new UserQueue(6L, 1L, "", now.plusSeconds(5L), UserQueueStatus.WAITING),
+                        new UserQueue(7L, 1L, "", now.plusSeconds(6L), UserQueueStatus.WAITING)
+                )
+        );
+
         Long userId = 1L;
         Long userQueuePk = 10L;
         UserQueueTokenProvider userQueueTokenProvider = new JwtUserQueueTokenProviderTest(userId, userQueuePk);
         UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
         Long concertScheduleId = 1L;
+        String token = "token";
+        userQueueJpaRepository.save(
+                new UserQueue(8L, concertScheduleId, token, now.plusSeconds(7L), UserQueueStatus.WAITING)
+        );
 
         // when
-        Integer waitingNumber = userQueueManager.selectWaitingNumber(concertScheduleId, userId);
+        Integer waitingNumber = userQueueManager.selectWaitingNumber(token, concertScheduleId, userId);
 
         // then
         assertThat(waitingNumber).isEqualTo(3L);

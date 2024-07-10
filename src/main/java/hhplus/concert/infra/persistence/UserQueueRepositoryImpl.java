@@ -42,8 +42,8 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     }
 
     @Override
-    public List<UserQueue> findStatusIsWaitingBy(Long concertScheduleId) {
-        return userQueueJpaRepository.findOrderByIdDescBy(concertScheduleId, UserQueueStatus.WAITING);
+    public List<UserQueue> findStatusIsWaitingAndAlreadyEnteredBy(Long concertScheduleId, LocalDateTime enteredAt) {
+        return userQueueJpaRepository.findOrderByIdDescBy(concertScheduleId, UserQueueStatus.WAITING, enteredAt);
     }
 
     @Override
