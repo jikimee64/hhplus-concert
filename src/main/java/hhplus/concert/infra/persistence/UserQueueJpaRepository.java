@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +26,26 @@ public interface UserQueueJpaRepository extends JpaRepository<UserQueue, Long> {
     Optional<UserQueue> findByUserIdAndConcertScheduleId(Long userId, Long concertScheduleId);
 
     @Modifying
-    @Query("UPDATE UserQueue uq SET uq.expiredAt =:expiredAt, uq.status = :status WHERE uq.userId =:userId AND uq.concertScheduleId =:concertScheduleId")
+    @Query("""
+                UPDATE UserQueue uq SET uq.expiredAt =:expiredAt, uq.status = :status
+                WHERE uq.userId =:userId AND uq.concertScheduleId =:concertScheduleId
+           """)
     Integer updateStatusAndExpiredAt(
             @Param("status") UserQueueStatus status,
             @Param("expiredAt") LocalDateTime expiredAt,
             @Param("userId") Long userId,
             @Param("concertScheduleId") Long concertScheduleId
+    );
+
+    @Modifying
+    @Query("""
+                UPDATE UserQueue uq SET uq.status = :updateStatus
+                WHERE uq.status =:conditionStatus AND uq.expiredAt < :conditionExpiredAt
+           """)
+    Integer updateStatusExpire(
+            @Param("updateStatus") UserQueueStatus updateStatus,
+            @Param("conditionStatus") UserQueueStatus conditionStatus,
+            @Param("conditionExpiredAt") LocalDateTime conditionExpiredAt
     );
 
 }

@@ -11,5 +11,6 @@ public interface UserQueueRepository {
     List<UserQueue> findStatusIsProgressBy(Long concertScheduleId);
     List<UserQueue> findStatusIsWaitingBy(Long concertScheduleId);
     Integer updateStatusAndExpiredAt(UserQueueStatus status, LocalDateTime expiredAt, Long userId, Long concertScheduleId);
+    Integer updateExpireConditionToken();
     List<UserQueue> findAll();
 }

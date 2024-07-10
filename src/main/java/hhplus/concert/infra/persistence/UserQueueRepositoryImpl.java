@@ -52,6 +52,15 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     }
 
     @Override
+    public Integer updateExpireConditionToken() {
+        return userQueueJpaRepository.updateStatusExpire(
+                UserQueueStatus.EXPIRED,
+                UserQueueStatus.PROGRESS,
+                LocalDateTime.now()
+        );
+    }
+
+    @Override
     public List<UserQueue> findAll() {
         return userQueueJpaRepository.findAll();
     }

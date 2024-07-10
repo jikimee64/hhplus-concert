@@ -3,15 +3,10 @@
 
 ```mermaid
 erDiagram
-    USER_CASH {
-        int id PK
-        int userId PK,FK "유저 아이디"
-        int balance "잔액"
-    }
-
     USER {
         int id PK
         int userId "유저 아이디"
+        int balance "잔액"
     }
 
     USER_QUEUE {
@@ -27,7 +22,6 @@ erDiagram
     PAYMENT {
         int id PK "PK(결제 번호)"
         int user_id PK, FK
-        int seat_id PK, FK
         int reservation_id PK, FK
         int price "결제 금액"
         varchar status "결제 상태(PROGRESS, DONE, CANCELED)"
@@ -64,8 +58,8 @@ erDiagram
         LocalDateTime concert_open_date "콘서트 개최 날짜"
         LocalDateTime concert_start_at "콘서트 시작 시간"
         LocalDateTime concert_end_at "콘서트 종료 시간"
-        int amount "좌석 금액"
-        int position "좌석 번호"
+        int seat_amount "좌석 금액"
+        int seat_position "좌석 번호"
         varchar status "예약 상태(TEMP_RESERVED, RESERVED)"
         LocalDateTime reserved_at "예약 시간"
     }
@@ -73,10 +67,7 @@ erDiagram
     CONCERT ||--o{ CONCERT_SCHEDULE: "has schedules"
     CONCERT_SCHEDULE ||--o{ CONCERT_SEAT: "has seats"
     USER ||--o{ USER_QUEUE: "enters queue"
-    USER ||--o{ USER_CASH: "has cash"
     USER ||--o{ PAYMENT: "made payment"
     CONCERT_SEAT ||--o{ PAYMENT: "is paid for"
-    USER ||--o{ RESERVATION: "made reservation"
-    CONCERT_SEAT ||--o{ RESERVATION: "is reserved"
     RESERVATION ||--|| PAYMENT: "is paid"
 ```
