@@ -56,6 +56,10 @@ public class UserQueue {
         return this.status == UserQueueStatus.EXPIRED;
     }
 
+    public void updateStatusDone(UserQueueStatus status) {
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }

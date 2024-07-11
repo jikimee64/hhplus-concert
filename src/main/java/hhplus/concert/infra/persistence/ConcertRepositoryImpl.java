@@ -47,6 +47,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
+    public Integer updateReservationStatus(ReservationStatus status, Long concertScheduleId, Long seatId) {
+        return reservationJpaRepository.updateReservationStatus(status, concertScheduleId, seatId);
+    }
+
+    @Override
     public Reservation saveReservation(Reservation reservation) {
         return reservationJpaRepository.save(reservation);
     }
@@ -59,6 +64,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     @Override
     public void deleteReservation(List<Reservation> reservations) {
         reservationJpaRepository.deleteAllInBatch(reservations);
+    }
+
+    @Override
+    public List<Reservation> findBy(Long concertScheduleId) {
+        return reservationJpaRepository.findByConcertScheduleId(concertScheduleId);
     }
 
 }

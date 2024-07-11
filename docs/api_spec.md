@@ -365,8 +365,8 @@
     - **Content:**
       ```json
       {
-        "concertOpenDate": "2024-01-01",
-        "purchaseAmount": 10000
+        "userId": 1,
+        "concertOpenDate": "2024-01-01"
       }
       ```
 - **Success Response:**

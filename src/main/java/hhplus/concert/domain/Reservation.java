@@ -62,6 +62,18 @@ public class Reservation {
         this.reservedAt = reservedAt;
     }
 
+    public boolean isUserAmountSufficient(Integer userAmount) {
+        return this.seatAmount <= userAmount;
+    }
+
+    public boolean isReserved() {
+        return this.status == ReservationStatus.RESERVED;
+    }
+
+    public boolean isTempReserved() {
+        return this.status == ReservationStatus.TEMP_RESERVED;
+    }
+
     public Long getId() {
         return id;
     }
@@ -70,7 +82,31 @@ public class Reservation {
         return seatId;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public Long getConcertScheduleId() {
+        return concertScheduleId;
+    }
+
+    public String getConcertTitle() {
+        return concertTitle;
+    }
+
+    public LocalDate getConcertOpenDate() {
+        return concertOpenDate;
+    }
+
+    public Integer getSeatPosition() {
+        return seatPosition;
+    }
+
     public ReservationStatus getStatus() {
         return status;
+    }
+
+    public Integer getSeatAmount() {
+        return seatAmount;
     }
 }

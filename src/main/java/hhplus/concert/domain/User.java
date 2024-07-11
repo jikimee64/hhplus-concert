@@ -25,6 +25,11 @@ public class User {
         this.amount = amount;
     }
 
+    public User(String userId, int amount) {
+        this.userId = userId;
+        this.amount = amount;
+    }
+
     public User(String userId) {
         this(null, userId, 0);
     }
@@ -35,6 +40,10 @@ public class User {
 
     public void addAmount(int amount) {
         this.amount += amount;
+    }
+
+    public void subtractAmount(int amount) {
+        this.amount -= amount;
     }
 
     public int getAmount() {

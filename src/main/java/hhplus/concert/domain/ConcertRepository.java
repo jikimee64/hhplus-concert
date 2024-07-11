@@ -10,7 +10,9 @@ public interface ConcertRepository {
     List<SeatQueryDto> findConcertSeat(Long concertScheduleId);
     ConcertSeat findSeat(Long seatId);
     ConcertSchedule findConcertSchedule(Long concertScheduleId);
+    Integer updateReservationStatus(ReservationStatus status, Long concertScheduleId, Long seatId);
     Reservation saveReservation(Reservation reservation);
     List<Reservation> findReservationReleaseTarget(LocalDateTime expiredAt);
     void deleteReservation(List<Reservation> reservations);
+    List<Reservation> findBy(Long concertScheduleId);
 }
