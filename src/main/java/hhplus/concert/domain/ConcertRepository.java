@@ -14,5 +14,6 @@ public interface ConcertRepository {
     Reservation saveReservation(Reservation reservation);
     List<Reservation> findReservationReleaseTarget(LocalDateTime expiredAt);
     void deleteReservation(List<Reservation> reservations);
+    void deleteSeats(List<Long> seats);
     List<Reservation> findBy(Long concertScheduleId);
 }

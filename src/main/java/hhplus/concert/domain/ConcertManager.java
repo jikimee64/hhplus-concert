@@ -4,6 +4,7 @@ import hhplus.concert.api.support.ApiException;
 import hhplus.concert.api.support.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -13,6 +14,7 @@ public class ConcertManager {
 
     private final ConcertRepository concertRepository;
 
+    @Transactional
     public Reservation reserveSeat(Long concertScheduleId, LocalDate concertOpenDate, Long userId, Long seatId) {
         if (isSeatReserved(concertScheduleId, seatId)) {
             throw new ApiException(ErrorCode.E002, "concertScheduleId = " + concertScheduleId + ", seatId = " + seatId);
@@ -23,7 +25,7 @@ public class ConcertManager {
         }
         ConcertSeat concertSeat = concertRepository.findSeat(seatId);
 
-        return generateReservation(concertSchedule, concertSeat, userId);
+        return saveReservation(concertSchedule, concertSeat, userId);
     }
 
     private boolean isSeatReserved(Long concertScheduleId, Long seatId) {
@@ -34,7 +36,7 @@ public class ConcertManager {
         return !requestConcertOpenDate.equals(concertSchedule);
     }
 
-    private Reservation generateReservation(ConcertSchedule concertSchedule, ConcertSeat concertSeat, Long userId) {
+    private Reservation saveReservation(ConcertSchedule concertSchedule, ConcertSeat concertSeat, Long userId) {
         return concertRepository.saveReservation(
                 Reservation.builder()
                         .userId(userId)

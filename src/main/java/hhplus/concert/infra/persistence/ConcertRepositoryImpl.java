@@ -67,6 +67,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
+    public void deleteSeats(List<Long> seats) {
+        concertSeatJpaRepository.deleteAllById(seats);
+    }
+
+    @Override
     public List<Reservation> findBy(Long concertScheduleId) {
         return reservationJpaRepository.findByConcertScheduleId(concertScheduleId);
     }
