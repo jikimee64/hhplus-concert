@@ -35,9 +35,12 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
-    public ConcertSeat findSeat(Long seatId) {
-        return concertSeatJpaRepository.findById(seatId)
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, "Seat not found seatId = " + seatId));
+    public ConcertSeat saveSeat(ConcertSeat concertSeat) {
+        return concertSeatJpaRepository.save(concertSeat);
+    }
+
+    public Optional<ConcertSeat> findSeatBy(Long concertScheduleId, Integer position) {
+        return concertSeatJpaRepository.findByConcertScheduleIdAndPosition(concertScheduleId, position);
     }
 
     @Override

@@ -98,6 +98,14 @@ public class Reservation {
         return concertOpenDate;
     }
 
+    public LocalDateTime getConcertStartAt() {
+        return concertStartAt;
+    }
+
+    public LocalDateTime getConcertEndAt() {
+        return concertEndAt;
+    }
+
     public Integer getSeatPosition() {
         return seatPosition;
     }

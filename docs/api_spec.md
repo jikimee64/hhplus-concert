@@ -224,18 +224,19 @@
 
 선택한 날짜의 좌석을 예약한다.
 
-- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat/{seatId}`
+- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat`
 - **Method:** `POST`
 - **Headers:**
     - `Authorization: Bearer QUEUE_TOKEN`
 - **URL Params:**
     - `concertScheduleId=[integer]` (required) 콘서트 스케줄 고유값
-    - `seatId=[integer]` (required) 좌석 고유값
 - **Request Body:**
     - **Content:**
       ```json
       {
         "userId": 1,
+        "seatPosition": 1,
+        "seatAmount": 10000,
         "concertOpenDate": "2024-01-01"
       }
       ```
