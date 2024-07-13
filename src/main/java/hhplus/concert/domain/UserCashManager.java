@@ -11,13 +11,13 @@ public class UserCashManager {
     private final UserRepository userRepository;
 
     @Transactional
-    public void chargeAmount(Long userId, int amount) {
+    public void chargeAmount(Long userId, Integer amount) {
         User user = userRepository.findById(userId);
         user.addAmount(amount);
     }
 
     @Transactional(readOnly = true)
-    public int selectAmount(Long userId) {
+    public Integer selectAmount(Long userId) {
         User user = userRepository.findById(userId);
         return user.getAmount();
     }

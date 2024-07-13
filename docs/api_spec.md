@@ -156,7 +156,7 @@
 
 선택한 콘서트 스케줄의 좌석 정보를 조회한다.
 
-- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat
+- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat`
 - **Method:** `GET`
 - **URL Params:**
     - `concertScheduleId=[integer]` (required) 콘서트 스케줄 고유값

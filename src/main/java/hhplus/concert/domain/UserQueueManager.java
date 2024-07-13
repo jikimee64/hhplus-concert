@@ -37,7 +37,7 @@ public class UserQueueManager {
      * - 대기열이 꽉 찼을 경우 대기 순번을 계산하여 반환
      */
     @Transactional
-    public Integer selectWaitingNumber(String token, Long concertScheduleId, Long userId) {
+    public Integer selectWaitingNumber(String token, Long concertScheduleId) {
         List<UserQueue> progressingUserQueues = userQueueRepository.findStatusIsProgressBy(concertScheduleId);
 
         /**
@@ -45,7 +45,7 @@ public class UserQueueManager {
          */
         if (progressingUserQueues.size() < userQueueConstant.getMaxWaitingNumber()) {
             LocalDateTime expiredAt = timeHolder.currentDateTime().plusMinutes(userQueueConstant.getQueueTokenExpireTime());
-            userQueueRepository.updateStatusAndExpiredAt(UserQueueStatus.PROGRESS, expiredAt, userId, concertScheduleId);
+            userQueueRepository.updateStatusAndExpiredAt(UserQueueStatus.PROGRESS, expiredAt, token);
             return 0;
         }
 

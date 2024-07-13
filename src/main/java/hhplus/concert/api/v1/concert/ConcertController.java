@@ -47,12 +47,12 @@ public class ConcertController {
     }
 
     @Operation(summary = "예약 가능 날짜 조회", description = "예약 가능 날짜를 조회한다")
-    @GetMapping("/{concertScheduleId}/reservation/date")
+    @GetMapping("/{concertId}/reservation/date")
     public ApiResponse<SelectReservationDateResponse> selectReservationDate(
             @Parameter(description = "대기열 토큰")
             @RequestHeader("Authorization") String queueToken,
             @Parameter(description = "콘서트 스케줄 고유값")
-            @PathVariable("concertScheduleId") Long concertScheduleId,
+            @PathVariable("concertId") Long concertId,
             @Parameter(description = "예약 가능 상태")
             @RequestParam(value = "status", defaultValue = "ACTIVE") String status
     ) {
@@ -67,9 +67,7 @@ public class ConcertController {
             @Parameter(description = "대기열 토큰")
             @RequestHeader("Authorization") String queueToken,
             @Parameter(description = "콘서트 스케줄 고유값")
-            @PathVariable("concertScheduleId") Long concertScheduleId,
-            @Parameter(description = "콘서트 오픈 날짜(2024-01-01)")
-            @RequestParam(value = "concertOpenDate") LocalDate concertOpenDate
+            @PathVariable("concertScheduleId") Long concertScheduleId
     ) {
         return ApiResponse.success(new SelectReservationSeatResponse(
                 List.of(
@@ -96,20 +94,18 @@ public class ConcertController {
     }
 
     @Operation(summary = "좌석을 예약한다", description = "좌석을 예약한다")
-    @PostMapping("/{concertScheduleId}/reservation/seat/{seatId}")
+    @PostMapping("/{concertScheduleId}/reservation/seat")
     public ApiResponse<?> reserveSeat(
             @Parameter(description = "대기열 토큰")
             @RequestHeader("Authorization") String queueToken,
             @Parameter(description = "콘서트 스케줄 고유값")
             @PathVariable("concertScheduleId") Long concertScheduleId,
-            @Parameter(description = "좌석 고유값")
-            @PathVariable("seatId") Long seatId,
             @RequestBody ReserveSeatRequest request
     ) {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "좌석을 구매한다", description = "좌석을 구매한다")
+    @Operation(summary = "좌석을 결제한다", description = "좌석을 결제한다")
     @PostMapping("/{concertScheduleId}/purchase/seat/{seatId}")
     public ApiResponse<PurchaseSeatReceiptResponse> purchaseSeat(
             @Parameter(description = "대기열 토큰")

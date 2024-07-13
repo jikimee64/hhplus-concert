@@ -47,8 +47,8 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     }
 
     @Override
-    public Integer updateStatusAndExpiredAt(UserQueueStatus status, LocalDateTime expiredAt, Long userId, Long concertScheduleId) {
-        return userQueueJpaRepository.updateStatusAndExpiredAt(status, expiredAt, userId, concertScheduleId);
+    public Integer updateStatusAndExpiredAt(UserQueueStatus status, LocalDateTime expiredAt, String token) {
+        return userQueueJpaRepository.updateStatusAndExpiredAt(status, expiredAt, token);
     }
 
     @Override
