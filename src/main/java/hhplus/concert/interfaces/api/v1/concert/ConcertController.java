@@ -1,12 +1,10 @@
-package hhplus.concert.api.v1.concert;
+package hhplus.concert.interfaces.api.v1.concert;
 
-import hhplus.concert.api.support.ApiResponse;
-import hhplus.concert.api.v1.concert.request.CreateQueueTokenRequest;
-import hhplus.concert.api.v1.concert.request.PurchaseSeatRequest;
-import hhplus.concert.api.v1.concert.request.ReserveSeatRequest;
-import hhplus.concert.api.v1.concert.response.*;
-import hhplus.concert.api.v1.concert.response.PurchaseSeatReceiptResponse.ReceiptResponse;
-import hhplus.concert.api.v1.concert.response.SelectReservationSeatResponse.SeatResponse;
+import hhplus.concert.interfaces.api.support.ApiResponse;
+import hhplus.concert.interfaces.api.v1.concert.request.CreateQueueTokenRequest;
+import hhplus.concert.interfaces.api.v1.concert.request.PurchaseSeatRequest;
+import hhplus.concert.interfaces.api.v1.concert.request.ReserveSeatRequest;
+import hhplus.concert.interfaces.api.v1.concert.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -71,19 +69,19 @@ public class ConcertController {
     ) {
         return ApiResponse.success(new SelectReservationSeatResponse(
                 List.of(
-                        new SeatResponse(
+                        new SelectReservationSeatResponse.SeatResponse(
                                 1L,
                                 1,
                                 10000,
                                 "AVAILABLE"
                         ),
-                        new SeatResponse(
+                        new SelectReservationSeatResponse.SeatResponse(
                                 2L,
                                 2,
                                 10000,
                                 "TEMP_RESERVED"
                         ),
-                        new SeatResponse(
+                        new SelectReservationSeatResponse.SeatResponse(
                                 3L,
                                 3,
                                 10000,
@@ -117,7 +115,7 @@ public class ConcertController {
             @RequestBody PurchaseSeatRequest request
     ) {
         return ApiResponse.success(new PurchaseSeatReceiptResponse(
-                new ReceiptResponse(
+                new PurchaseSeatReceiptResponse.ReceiptResponse(
                         1L,
                         "콘서트 명",
                         LocalDate.of(2024,1,1),

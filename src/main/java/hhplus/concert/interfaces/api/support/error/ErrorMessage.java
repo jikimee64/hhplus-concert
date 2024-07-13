@@ -1,9 +1,7 @@
-package hhplus.concert.api.support.error;
+package hhplus.concert.interfaces.api.support.error;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-
-import javax.lang.model.type.ErrorType;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 

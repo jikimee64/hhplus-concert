@@ -1,7 +1,7 @@
 package hhplus.concert.domain;
 
-import hhplus.concert.api.support.ApiException;
-import hhplus.concert.api.support.error.ErrorCode;
+import hhplus.concert.interfaces.api.support.ApiException;
+import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.infra.persistence.UserQueueJpaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

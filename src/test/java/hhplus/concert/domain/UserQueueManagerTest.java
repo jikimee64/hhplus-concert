@@ -1,7 +1,7 @@
 package hhplus.concert.domain;
 
 import hhplus.concert.IntegrationTest;
-import hhplus.concert.api.support.ApiException;
+import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.infra.tokenprovider.UuidUserQueueTokenProviderTest;
 import hhplus.concert.infra.persistence.UserQueueJpaRepository;
 import hhplus.concert.support.holder.TestTimeHolder;

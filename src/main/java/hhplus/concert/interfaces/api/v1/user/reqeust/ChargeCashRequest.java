@@ -1,4 +1,4 @@
-package hhplus.concert.api.v1.user.reqeust;
+package hhplus.concert.interfaces.api.v1.user.reqeust;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
