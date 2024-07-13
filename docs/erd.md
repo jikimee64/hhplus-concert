@@ -6,7 +6,7 @@ erDiagram
     USER {
         int id PK
         int userId "유저 아이디"
-        int balance "잔액"
+        int amount "잔액"
     }
 
     USER_QUEUE {
@@ -53,9 +53,10 @@ erDiagram
     RESERVATION {
         int id PK
         int user_id PK, FK
+        int concert_schedule_id PK, FK
         int seat_id PK, FK
         varchar concert_title "콘서트 제목"
-        LocalDateTime concert_open_date "콘서트 개최 날짜"
+        LocalDate concert_open_date "콘서트 개최 날짜"
         LocalDateTime concert_start_at "콘서트 시작 시간"
         LocalDateTime concert_end_at "콘서트 종료 시간"
         int seat_amount "좌석 금액"

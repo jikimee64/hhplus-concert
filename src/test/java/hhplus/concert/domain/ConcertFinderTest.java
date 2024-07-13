@@ -1,6 +1,7 @@
 package hhplus.concert.domain;
 
 import hhplus.concert.IntegrationTest;
+import hhplus.concert.infra.persistence.ConcertJpaRepository;
 import hhplus.concert.infra.persistence.ConcertScheduleJpaRepository;
 import hhplus.concert.infra.persistence.ConcertSeatJpaRepository;
 import hhplus.concert.infra.persistence.ReservationJpaRepository;
@@ -21,6 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class ConcertFinderTest extends IntegrationTest {
 
     @Autowired
+    private ConcertJpaRepository concertJpaRepository;
+
+    @Autowired
     private ConcertScheduleJpaRepository concertScheduleJpaRepository;
 
     @Autowired
@@ -35,7 +39,8 @@ class ConcertFinderTest extends IntegrationTest {
     @Test
     void 콘서트의_예약_가능한_콘서트_스케줄을_조회한다() {
         // given
-        Long concertId = 1L;
+        Concert savedConcert1 = concertJpaRepository.save(new Concert("콘서트1"));
+        Concert savedConcert2 = concertJpaRepository.save(new Concert("콘서트2"));
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate localDate = LocalDate.parse("2024-01-01", dateFormatter);
@@ -43,15 +48,15 @@ class ConcertFinderTest extends IntegrationTest {
 
         concertScheduleJpaRepository.saveAll(
                 List.of(
-                        new ConcertSchedule(concertId, localDate, localDateTime, localDateTime.plusHours(1L), 50, TotalSeatStatus.SOLD_OUT),
-                        new ConcertSchedule(concertId, localDate, localDateTime.plusHours(1L), localDateTime.plusHours(2L), 50, TotalSeatStatus.AVAILABLE),
-                        new ConcertSchedule(concertId, localDate, localDateTime.plusHours(2L), localDateTime.plusHours(3L), 50, TotalSeatStatus.SOLD_OUT),
-                        new ConcertSchedule(2L, localDate, localDateTime.plusHours(2L), localDateTime.plusHours(3L), 50, TotalSeatStatus.AVAILABLE)
+                        new ConcertSchedule(savedConcert1, localDate, localDateTime, localDateTime.plusHours(1L), 50, TotalSeatStatus.SOLD_OUT),
+                        new ConcertSchedule(savedConcert1, localDate, localDateTime.plusHours(1L), localDateTime.plusHours(2L), 50, TotalSeatStatus.AVAILABLE),
+                        new ConcertSchedule(savedConcert1, localDate, localDateTime.plusHours(2L), localDateTime.plusHours(3L), 50, TotalSeatStatus.SOLD_OUT),
+                        new ConcertSchedule(savedConcert2, localDate, localDateTime.plusHours(2L), localDateTime.plusHours(3L), 50, TotalSeatStatus.AVAILABLE)
                 )
         );
 
         // when
-        List<ConcertSchedule> concertSchedules = concertFinder.selectConcertScheduleBy(concertId, "AVAILABLE");
+        List<ConcertSchedule> concertSchedules = concertFinder.selectConcertScheduleBy(savedConcert1.getId(), "AVAILABLE");
 
         // then
         assertThat(concertSchedules).hasSize(1)
@@ -64,7 +69,7 @@ class ConcertFinderTest extends IntegrationTest {
     @Test
     void 콘서트_스케줄의_전체_좌석을_조회한다() {
         // given
-        Long concertId = 1L;
+        Concert savedConcert1 = concertJpaRepository.save(new Concert("콘서트1"));
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate openDate = LocalDate.parse("2024-01-01", dateFormatter);
@@ -72,7 +77,7 @@ class ConcertFinderTest extends IntegrationTest {
         int totalSeat = 50;
 
         ConcertSchedule savedConcertSchedule = concertScheduleJpaRepository.save(
-                new ConcertSchedule(concertId, openDate, localDateTime, localDateTime.plusHours(1L), totalSeat, TotalSeatStatus.AVAILABLE)
+                new ConcertSchedule(savedConcert1, openDate, localDateTime, localDateTime.plusHours(1L), totalSeat, TotalSeatStatus.AVAILABLE)
         );
 
         ConcertSeat savedConcertSeat = concertSeatJpaRepository.save(

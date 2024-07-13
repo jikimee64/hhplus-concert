@@ -35,4 +35,16 @@ public class ConcertSeat {
     public Long getId() {
         return id;
     }
+
+    public Long getConcertScheduleId() {
+        return concertScheduleId;
+    }
+
+    public Integer getAmount() {
+        return amount;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
 }
