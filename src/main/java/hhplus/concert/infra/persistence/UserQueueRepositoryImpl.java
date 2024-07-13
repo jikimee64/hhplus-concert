@@ -42,13 +42,22 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     }
 
     @Override
-    public List<UserQueue> findStatusIsWaitingBy(Long concertScheduleId) {
-        return userQueueJpaRepository.findOrderByIdDescBy(concertScheduleId, UserQueueStatus.WAITING);
+    public List<UserQueue> findStatusIsWaitingAndAlreadyEnteredBy(Long concertScheduleId, LocalDateTime enteredAt) {
+        return userQueueJpaRepository.findOrderByIdDescBy(concertScheduleId, UserQueueStatus.WAITING, enteredAt);
     }
 
     @Override
-    public Integer updateStatusAndExpiredAt(UserQueueStatus status, LocalDateTime expiredAt, Long userId, Long concertScheduleId) {
-        return userQueueJpaRepository.updateStatusAndExpiredAt(status, expiredAt, userId, concertScheduleId);
+    public Integer updateStatusAndExpiredAt(UserQueueStatus status, LocalDateTime expiredAt, String token) {
+        return userQueueJpaRepository.updateStatusAndExpiredAt(status, expiredAt, token);
+    }
+
+    @Override
+    public Integer updateExpireConditionToken() {
+        return userQueueJpaRepository.updateStatusExpire(
+                UserQueueStatus.EXPIRED,
+                UserQueueStatus.PROGRESS,
+                LocalDateTime.now()
+        );
     }
 
     @Override

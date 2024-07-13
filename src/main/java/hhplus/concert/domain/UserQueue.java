@@ -36,6 +36,10 @@ public class UserQueue {
         this.expiredAt = expiredAt;
     }
 
+    public UserQueue(Long userId, Long concertScheduleId, String token, LocalDateTime enteredAt, UserQueueStatus status) {
+        this(userId, concertScheduleId, token, status, enteredAt, null);
+    }
+
     public UserQueue(Long userId, Long concertScheduleId, String token, UserQueueStatus status) {
         this(userId, concertScheduleId, token, status, LocalDateTime.now(), null);
     }
@@ -52,6 +56,10 @@ public class UserQueue {
         return this.status == UserQueueStatus.EXPIRED;
     }
 
+    public void updateStatusDone(UserQueueStatus status) {
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }
@@ -66,5 +74,9 @@ public class UserQueue {
 
     public String getToken() {
         return token;
+    }
+
+    public LocalDateTime getEnteredAt() {
+        return enteredAt;
     }
 }
