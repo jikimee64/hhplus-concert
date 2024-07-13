@@ -5,9 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 
 public record PurchaseSeatRequest(
+        @Schema(description = "유저 고유값")
+        Long userId,
         @Schema(description = "콘서트 오픈 날짜")
-        LocalDate concertOpenDate,
-        @Schema(description = "구매 금액")
-        Integer purchaseAmount
+        LocalDate concertOpenDate
 ) {
 }

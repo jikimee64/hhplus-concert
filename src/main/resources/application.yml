@@ -1,39 +1,6 @@
 spring:
-  jwt:
-    secret: 4c0bc59fdf5ce797e7f299280e17898d47117521d0bef19072a80e6613b0efffde5b8dcd0b6377119170918848556799fab6ad3f57775eb9501f2f55a12a430c
-    expiredMs: 86400000 # 1일
-
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: create-drop
-    open-in-view: false
-    show-sql: true
-    properties:
-      hibernate.format_sql: true
-      hibernate.use_sql_comments: true
-    defer-datasource-initialization: true
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:concert;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
-
-  h2:
-    console:
-      enabled: true
-
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.orm.jdbc.bind: TRACE
-
-springdoc:
-  packages-to-scan: hhplus.concert.api.v1
-  default-consumes-media-type: application/json;charset=UTF-8
-  default-produces-media-type: application/json;charset=UTF-8
-  swagger-ui:
-    path: /
-    disable-swagger-default-url: true # 스웨거 기본 접속 비활성화 ( /swagger-ui/index.html )
-    display-request-duration: true # API 요청 시간 표시
-    operations-sorter: alpha # 알파벳 순서로 API 정렬
+  profiles:
+    group:
+      local: local, docs
+      test: test
+    default: local
