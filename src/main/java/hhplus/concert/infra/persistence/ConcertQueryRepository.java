@@ -1,7 +1,7 @@
 package hhplus.concert.infra.persistence;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import hhplus.concert.domain.*;
+import hhplus.concert.domain.concert.QSeatQueryDto;
 import hhplus.concert.domain.concert.Reservation;
 import hhplus.concert.domain.concert.ReservationStatus;
 import hhplus.concert.domain.concert.SeatQueryDto;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static hhplus.concert.domain.QConcertSchedule.concertSchedule;
-import static hhplus.concert.domain.QConcertSeat.concertSeat;
-import static hhplus.concert.domain.QPayment.payment;
-import static hhplus.concert.domain.QReservation.reservation;
+import static hhplus.concert.domain.concert.QConcertSchedule.concertSchedule;
+import static hhplus.concert.domain.concert.QConcertSeat.concertSeat;
+import static hhplus.concert.domain.concert.QReservation.reservation;
+import static hhplus.concert.domain.pay.QPayment.payment;
 
 @Repository
 @RequiredArgsConstructor
