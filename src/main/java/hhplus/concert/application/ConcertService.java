@@ -1,6 +1,7 @@
 package hhplus.concert.application;
 
-import hhplus.concert.domain.*;
+import hhplus.concert.domain.concert.*;
+import hhplus.concert.domain.userqueue.UserQueueManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

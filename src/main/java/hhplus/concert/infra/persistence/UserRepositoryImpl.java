@@ -2,8 +2,8 @@ package hhplus.concert.infra.persistence;
 
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
-import hhplus.concert.domain.User;
-import hhplus.concert.domain.UserRepository;
+import hhplus.concert.domain.user.User;
+import hhplus.concert.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

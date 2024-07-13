@@ -1,6 +1,6 @@
 package hhplus.concert.infra.persistence;
 
-import hhplus.concert.domain.ConcertSeat;
+import hhplus.concert.domain.concert.ConcertSeat;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

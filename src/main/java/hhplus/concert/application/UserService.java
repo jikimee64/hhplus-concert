@@ -1,6 +1,6 @@
 package hhplus.concert.application;
 
-import hhplus.concert.domain.UserCashManager;
+import hhplus.concert.domain.user.UserCashManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

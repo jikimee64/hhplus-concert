@@ -1,7 +1,7 @@
 package hhplus.concert.infra.persistence;
 
-import hhplus.concert.domain.Payment;
-import hhplus.concert.domain.PaymentRepository;
+import hhplus.concert.domain.pay.Payment;
+import hhplus.concert.domain.pay.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

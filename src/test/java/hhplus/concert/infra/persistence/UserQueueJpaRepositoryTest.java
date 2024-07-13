@@ -1,11 +1,10 @@
 package hhplus.concert.infra.persistence;
 
 import hhplus.concert.IntegrationTest;
-import hhplus.concert.domain.UserQueue;
-import hhplus.concert.domain.UserQueueStatus;
+import hhplus.concert.domain.userqueue.UserQueue;
+import hhplus.concert.domain.userqueue.UserQueueStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;

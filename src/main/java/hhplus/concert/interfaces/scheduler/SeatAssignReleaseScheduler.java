@@ -1,6 +1,6 @@
 package hhplus.concert.interfaces.scheduler;
 
-import hhplus.concert.domain.SeatAssignReleaseChecker;
+import hhplus.concert.domain.concert.SeatAssignReleaseChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

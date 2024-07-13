@@ -1,8 +1,8 @@
 package hhplus.concert.application;
 
-import hhplus.concert.domain.PaymentManager;
-import hhplus.concert.domain.Receipt;
-import hhplus.concert.domain.UserQueueManager;
+import hhplus.concert.domain.pay.PaymentManager;
+import hhplus.concert.domain.pay.Receipt;
+import hhplus.concert.domain.userqueue.UserQueueManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -2,9 +2,9 @@ package hhplus.concert.infra.persistence;
 
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
-import hhplus.concert.domain.UserQueue;
-import hhplus.concert.domain.UserQueueRepository;
-import hhplus.concert.domain.UserQueueStatus;
+import hhplus.concert.domain.userqueue.UserQueue;
+import hhplus.concert.domain.userqueue.UserQueueRepository;
+import hhplus.concert.domain.userqueue.UserQueueStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

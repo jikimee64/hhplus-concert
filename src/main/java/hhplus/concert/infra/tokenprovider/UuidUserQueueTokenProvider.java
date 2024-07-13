@@ -1,6 +1,6 @@
 package hhplus.concert.infra.tokenprovider;
 
-import hhplus.concert.domain.UserQueueTokenProvider;
+import hhplus.concert.domain.userqueue.UserQueueTokenProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
