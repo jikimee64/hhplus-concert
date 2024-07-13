@@ -156,7 +156,7 @@
 
 선택한 콘서트 스케줄의 좌석 정보를 조회한다.
 
-- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat
+- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat`
 - **Method:** `GET`
 - **URL Params:**
     - `concertScheduleId=[integer]` (required) 콘서트 스케줄 고유값
@@ -224,18 +224,19 @@
 
 선택한 날짜의 좌석을 예약한다.
 
-- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat/{seatId}`
+- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat`
 - **Method:** `POST`
 - **Headers:**
     - `Authorization: Bearer QUEUE_TOKEN`
 - **URL Params:**
     - `concertScheduleId=[integer]` (required) 콘서트 스케줄 고유값
-    - `seatId=[integer]` (required) 좌석 고유값
 - **Request Body:**
     - **Content:**
       ```json
       {
         "userId": 1,
+        "seatPosition": 1,
+        "seatAmount": 10000,
         "concertOpenDate": "2024-01-01"
       }
       ```
@@ -306,7 +307,7 @@
 
 - 잔액을 충전한다
 
-- **URL:** `/v1/users/{userId}/cash/charge`
+- **URL:** `/v1/users/{userId}/amount/charge`
 - **Method:** `POST`
 - **URL Params:**
     - `userId=[integer]` (required) 유저 고유값
@@ -327,25 +328,12 @@
             "error": {}
         }
       ```
-- **Error Response:**
-    - **Code:** 200 OK
-    - **Content:**
-      ```json
-        {
-          "result": "FAIL",
-          "data": {},
-          "error": {
-            "code": "003",
-            "message": "충전 금액은 0이상 가능합니다."
-          }
-        }
-      ```
 
 ### 잔액 조회 API
 
 - 잔액을 조회한다
 
-- **URL:** `/v1/users/{userId}/cash`
+- **URL:** `/v1/users/{userId}/amount`
 - **Method:** `GET`
 - **URL Params:**
     - `userId=[integer]` (required) 유저 고유값
@@ -356,7 +344,7 @@
         {
             "result": "SUCCESS",
             "data": {
-              "cash": 10000
+              "amount": 10000
             },
             "error": {}
         }
@@ -378,8 +366,8 @@
     - **Content:**
       ```json
       {
-        "concertOpenDate": "2024-01-01",
-        "purchaseAmount": 10000
+        "userId": 1,
+        "concertOpenDate": "2024-01-01"
       }
       ```
 - **Success Response:**

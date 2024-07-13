@@ -6,7 +6,7 @@ erDiagram
     USER {
         int id PK
         int userId "유저 아이디"
-        int balance "잔액"
+        int amount "잔액"
     }
 
     USER_QUEUE {
