@@ -1,6 +1,7 @@
 package hhplus.concert.domain;
 
 import hhplus.concert.IntegrationTest;
+import hhplus.concert.infra.persistence.ConcertSeatJpaRepository;
 import hhplus.concert.infra.persistence.PaymentJpaRepository;
 import hhplus.concert.infra.persistence.ReservationJpaRepository;
 import hhplus.concert.support.holder.TestTimeHolder;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 
 @Transactional
@@ -23,6 +25,9 @@ class SeatAssignReleaseCheckerTest extends IntegrationTest {
 
     @Autowired
     private PaymentJpaRepository paymentJpaRepository;
+
+    @Autowired
+    private ConcertSeatJpaRepository concertSeatJpaRepository;
 
     @Autowired
     private ConcertRepository concertRepository;
@@ -36,14 +41,25 @@ class SeatAssignReleaseCheckerTest extends IntegrationTest {
 
         LocalDateTime expiredAt = LocalDateTime.of(2024, 1, 1, 0, 4, 59);
         LocalDateTime nonExpiredAt = LocalDateTime.of(2024, 1, 1, 0, 5, 1);
-        reservationJpaRepository.save(
-                new Reservation(1L, 1L, ReservationStatus.TEMP_RESERVED, nonExpiredAt)
+        ConcertSeat concertSeat1 = concertSeatJpaRepository.save(
+                new ConcertSeat(1L, 0, 0)
         );
         reservationJpaRepository.save(
-                new Reservation(1L, 1L, ReservationStatus.TEMP_RESERVED, expiredAt)
+                new Reservation(1L, concertSeat1.getId(), ReservationStatus.TEMP_RESERVED, nonExpiredAt)
+        );
+
+        ConcertSeat concertSeat2 = concertSeatJpaRepository.save(
+                new ConcertSeat(1L, 0, 0)
+        );
+        reservationJpaRepository.save(
+                new Reservation(1L, concertSeat2.getId(), ReservationStatus.TEMP_RESERVED, expiredAt)
+        );
+
+        ConcertSeat concertSeat3 = concertSeatJpaRepository.save(
+                new ConcertSeat(1L, 0, 0)
         );
         Reservation savedReservation = reservationJpaRepository.save(
-                new Reservation(1L, 2L, ReservationStatus.TEMP_RESERVED, expiredAt)
+                new Reservation(1L, concertSeat3.getId(), ReservationStatus.TEMP_RESERVED, expiredAt)
         );
         paymentJpaRepository.save(
                 new Payment(1L, savedReservation.getId(), PaymentStatus.PROGRESS)
@@ -54,7 +70,11 @@ class SeatAssignReleaseCheckerTest extends IntegrationTest {
 
         // then
         List<Reservation> reservations = reservationJpaRepository.findAll();
-        assertThat(reservations).hasSize(1);
+        List<ConcertSeat> concertSeats = concertSeatJpaRepository.findAll();
+        assertAll(
+                () -> assertThat(reservations).hasSize(1),
+                () -> assertThat(concertSeats).hasSize(1)
+        );
     }
 
 }
