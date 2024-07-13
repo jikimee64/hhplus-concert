@@ -15,10 +15,26 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserQueueJpaRepository extends JpaRepository<UserQueue, Long> {
-    @Query("SELECT uq FROM UserQueue uq WHERE uq.concertScheduleId =:concertScheduleId AND uq.status =:status order by uq.id desc")
+    @Query("""
+              SELECT uq FROM UserQueue uq
+              WHERE uq.concertScheduleId =:concertScheduleId AND uq.status =:status
+              order by uq.id desc
+           """)
     List<UserQueue> findOrderByIdDescBy(
             @Param("concertScheduleId") Long concertScheduleId,
             @Param("status") UserQueueStatus status
+    );
+
+    @Query("""
+              SELECT uq FROM UserQueue uq
+              WHERE uq.concertScheduleId =:concertScheduleId AND uq.status =:status
+              AND uq.enteredAt < :enteredAt
+              order by uq.id desc
+           """)
+    List<UserQueue> findOrderByIdDescBy(
+            @Param("concertScheduleId") Long concertScheduleId,
+            @Param("status") UserQueueStatus status,
+            @Param("enteredAt") LocalDateTime enteredAt
     );
 
     Optional<UserQueue> findByToken(String token);
@@ -28,13 +44,12 @@ public interface UserQueueJpaRepository extends JpaRepository<UserQueue, Long> {
     @Modifying
     @Query("""
                 UPDATE UserQueue uq SET uq.expiredAt =:expiredAt, uq.status = :status
-                WHERE uq.userId =:userId AND uq.concertScheduleId =:concertScheduleId
+                WHERE uq.token =:token
            """)
     Integer updateStatusAndExpiredAt(
             @Param("status") UserQueueStatus status,
             @Param("expiredAt") LocalDateTime expiredAt,
-            @Param("userId") Long userId,
-            @Param("concertScheduleId") Long concertScheduleId
+            @Param("userId") String token
     );
 
     @Modifying

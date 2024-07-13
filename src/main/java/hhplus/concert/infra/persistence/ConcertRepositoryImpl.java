@@ -35,15 +35,23 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
-    public ConcertSeat findSeat(Long seatId) {
-        return concertSeatJpaRepository.findById(seatId)
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, "Seat not found seatId = " + seatId));
+    public ConcertSeat saveSeat(ConcertSeat concertSeat) {
+        return concertSeatJpaRepository.save(concertSeat);
+    }
+
+    public Optional<ConcertSeat> findSeatBy(Long concertScheduleId, Integer position) {
+        return concertSeatJpaRepository.findByConcertScheduleIdAndPosition(concertScheduleId, position);
     }
 
     @Override
     public ConcertSchedule findConcertSchedule(Long concertScheduleId) {
         return concertScheduleJpaRepository.findById(concertScheduleId)
                 .orElseThrow(() -> new ApiException(ErrorCode.E404, "ConcertSchedule not found concertScheduleId = " + concertScheduleId));
+    }
+
+    @Override
+    public Integer updateReservationStatus(ReservationStatus status, Long concertScheduleId, Long seatId) {
+        return reservationJpaRepository.updateReservationStatus(status, concertScheduleId, seatId);
     }
 
     @Override
@@ -59,6 +67,16 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     @Override
     public void deleteReservation(List<Reservation> reservations) {
         reservationJpaRepository.deleteAllInBatch(reservations);
+    }
+
+    @Override
+    public void deleteSeats(List<Long> seats) {
+        concertSeatJpaRepository.deleteAllById(seats);
+    }
+
+    @Override
+    public List<Reservation> findBy(Long concertScheduleId) {
+        return reservationJpaRepository.findByConcertScheduleId(concertScheduleId);
     }
 
 }
