@@ -5,6 +5,7 @@ import hhplus.concert.domain.UserQueue;
 import hhplus.concert.domain.UserQueueStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -44,11 +45,11 @@ class UserQueueJpaRepositoryTest extends IntegrationTest {
     private void saveUserQueue() {
         userQueueJpaRepository.saveAll(
                 List.of(
-                    new UserQueue(1L, 1L, UserQueueStatus.PROGRESS),
-                    new UserQueue(2L, 2L, UserQueueStatus.WAITING),
-                    new UserQueue(3L, 1L, UserQueueStatus.PROGRESS),
-                    new UserQueue(4L, 1L, UserQueueStatus.DONE),
-                    new UserQueue(5L, 1L, UserQueueStatus.EXPIRED)
+                        new UserQueue(1L, 1L, UserQueueStatus.PROGRESS),
+                        new UserQueue(2L, 2L, UserQueueStatus.WAITING),
+                        new UserQueue(3L, 1L, UserQueueStatus.PROGRESS),
+                        new UserQueue(4L, 1L, UserQueueStatus.DONE),
+                        new UserQueue(5L, 1L, UserQueueStatus.EXPIRED)
                 )
         );
     }

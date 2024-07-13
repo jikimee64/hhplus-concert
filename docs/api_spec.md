@@ -98,29 +98,33 @@
 
 콘서트의 예약 가능한 날짜를 조회한다.
 
-- **URL:** `/v1/concerts/{concertScheduleId}/reservation/date?status=AVAILABLE`
+- **URL:** `/v1/concerts/{concertId}/reservation/date?status=AVAILABLE`
 - **Method:** `GET`
 - **Headers:**
     - `Authorization: Bearer QUEUE_TOKEN`
 - **URL Params:**
-    - `concertScheduleId=[integer]` (required) 콘서트 스케줄 고유값
+    - `concertId=[integer]` (required) 콘서트 고유값
 - **Query Params:**
     - `status=[string]` (required) 예약 가능 상태값 (AVAILABLE(기본값), SOLD_OUT)
-- **Success Response:**
-    - **Code:** 200 OK
-    - **Content:**
-    ```json
-      {
-          "result": "SUCCESS",
-          "data": {
-            "date": [
-              "2024-01-01",
-              "2024-01-02"
-            ]
-          },
-          "error": {}
-      }
-    ```
+      - **Success Response:**
+          - **Code:** 200 OK
+          - **Content:**
+          ```json
+            {
+                "result": "SUCCESS",
+                "data": {
+                  "concerts": [
+                        {
+                          "scheduleId": 1,
+                          "openDate": "2024-01-01",
+                          "startAt": "2024-01-01 00:00:00",
+                          "endAt": "2024-01-01 01:00:00"
+                        }
+                  ]
+                },
+                "error": {}
+            }
+          ```
 - **Error Response:**
     - **Code:** 200 OK
     - **Content:**
@@ -150,14 +154,12 @@
 
 ### 좌석 예약 조회 API
 
-선택한 날짜의 좌석 정보를 조회한다.
+선택한 콘서트 스케줄의 좌석 정보를 조회한다.
 
-- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat?concertOpenDate=2024-01-01`
+- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat`
 - **Method:** `GET`
 - **URL Params:**
     - `concertScheduleId=[integer]` (required) 콘서트 스케줄 고유값
-- **Query Params:**
-    - `concertOpenDate=[string]` (required) 콘서트 개최 날짜 (2024-01-01)
 - **Headers:**
     - `Authorization: Bearer QUEUE_TOKEN`
 - **Success Response:**
@@ -222,17 +224,19 @@
 
 선택한 날짜의 좌석을 예약한다.
 
-- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat/{seatId}`
+- **URL:** `/v1/concerts/{concertScheduleId}/reservation/seat`
 - **Method:** `POST`
 - **Headers:**
     - `Authorization: Bearer QUEUE_TOKEN`
 - **URL Params:**
     - `concertScheduleId=[integer]` (required) 콘서트 스케줄 고유값
-    - `seatId=[integer]` (required) 좌석 고유값
 - **Request Body:**
     - **Content:**
       ```json
       {
+        "userId": 1,
+        "seatPosition": 1,
+        "seatAmount": 10000,
         "concertOpenDate": "2024-01-01"
       }
       ```
@@ -286,11 +290,24 @@
         }
       ```
 
+  - **Code:** 200 OK
+      - **Content:**
+        ```json
+          {
+            "result": "FAIL",
+            "data": {},
+            "error": {
+              "code": "006",
+              "message": "콘서트 개최 날짜가 일치하지 않습니다."
+            }
+          }
+        ```
+
 ### 잔액 충전 API
 
 - 잔액을 충전한다
 
-- **URL:** `/v1/users/{userId}/cash/charge`
+- **URL:** `/v1/users/{userId}/amount/charge`
 - **Method:** `POST`
 - **URL Params:**
     - `userId=[integer]` (required) 유저 고유값
@@ -311,25 +328,12 @@
             "error": {}
         }
       ```
-- **Error Response:**
-    - **Code:** 200 OK
-    - **Content:**
-      ```json
-        {
-          "result": "FAIL",
-          "data": {},
-          "error": {
-            "code": "003",
-            "message": "충전 금액은 0이상 가능합니다."
-          }
-        }
-      ```
 
 ### 잔액 조회 API
 
 - 잔액을 조회한다
 
-- **URL:** `/v1/users/{userId}/cash`
+- **URL:** `/v1/users/{userId}/amount`
 - **Method:** `GET`
 - **URL Params:**
     - `userId=[integer]` (required) 유저 고유값
@@ -340,7 +344,7 @@
         {
             "result": "SUCCESS",
             "data": {
-              "cash": 10000
+              "amount": 10000
             },
             "error": {}
         }
@@ -362,8 +366,8 @@
     - **Content:**
       ```json
       {
-        "concertOpenDate": "2024-01-01",
-        "purchaseAmount": 10000
+        "userId": 1,
+        "concertOpenDate": "2024-01-01"
       }
       ```
 - **Success Response:**
