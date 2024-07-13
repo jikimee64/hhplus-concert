@@ -9,21 +9,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class UserQueueManager {
 
     private final UserQueueRepository userQueueRepository;
-    private final QueueTokenProvider queueTokenProvider;
+    private final UserQueueTokenProvider userQueueTokenProvider;
     private final TimeHolder timeHolder;
     private final UserQueueConstant userQueueConstant;
 
     @Transactional
     public String enterUserQueue(Long concertScheduleId, Long userId) {
-        UserQueue savedUserQueue = userQueueRepository.save(concertScheduleId, userId);
-        Long waitingNumber = savedUserQueue.getId();
-        return queueTokenProvider.createQueueToken(userId, waitingNumber);
+        Optional<UserQueue> optUserQueue = userQueueRepository.findBy(concertScheduleId, userId);
+        if (optUserQueue.isPresent()) {
+            return optUserQueue.get().getToken();
+        }
+        String queueToken = userQueueTokenProvider.createQueueToken();
+        userQueueRepository.save(concertScheduleId, userId, queueToken);
+        return queueToken;
     }
 
     /**
@@ -32,7 +37,7 @@ public class UserQueueManager {
      * - 대기열이 꽉 찼을 경우 대기 순번을 계산하여 반환
      */
     @Transactional
-    public Integer selectWaitingNumber(Long concertScheduleId, Long userId) {
+    public Integer selectWaitingNumber(String token, Long concertScheduleId) {
         List<UserQueue> progressingUserQueues = userQueueRepository.findStatusIsProgressBy(concertScheduleId);
 
         /**
@@ -40,20 +45,23 @@ public class UserQueueManager {
          */
         if (progressingUserQueues.size() < userQueueConstant.getMaxWaitingNumber()) {
             LocalDateTime expiredAt = timeHolder.currentDateTime().plusMinutes(userQueueConstant.getQueueTokenExpireTime());
-            userQueueRepository.updateStatusAndExpiredAt(UserQueueStatus.PROGRESS, expiredAt, userId, concertScheduleId);
+            userQueueRepository.updateStatusAndExpiredAt(UserQueueStatus.PROGRESS, expiredAt, token);
             return 0;
         }
 
         /**
          * 대기열이 꽉 찼을 경우 대기 순번을 계산하여 반환
+         * - 대기 상태가 WAITING이며 요청한 유저보다 진입 시점이 적은 토큰 조회
+         * - 대기 순번 = 조회된 토큰 수 + 1
          */
-        List<UserQueue> waitingUserQueues = userQueueRepository.findStatusIsWaitingBy(concertScheduleId);
+        UserQueue userQueue = userQueueRepository.findByOrElseThrow(token);
+        List<UserQueue> waitingUserQueues = userQueueRepository.findStatusIsWaitingAndAlreadyEnteredBy(concertScheduleId, userQueue.getEnteredAt());
         return waitingUserQueues.size() + 1;
     }
 
     @Transactional(readOnly = true)
-    public void validateTopExpiredBy(Long concertScheduleId, Long userId) {
-        UserQueue userQueue = userQueueRepository.findTopBy(concertScheduleId, userId);
+    public void validateTopExpiredBy(String token) {
+        UserQueue userQueue = userQueueRepository.findByOrElseThrow(token);
         if (userQueue.isExpired()) {
             throw new ApiException(ErrorCode.E001);
         }
