@@ -1,6 +1,5 @@
 package hhplus.concert.api.support;
 
-
 import hhplus.concert.api.support.error.ErrorCode;
 import hhplus.concert.api.support.error.ErrorMessage;
 import lombok.Getter;
@@ -41,4 +40,3 @@ public class ApiResponse<T> {
     }
 
 }
-
