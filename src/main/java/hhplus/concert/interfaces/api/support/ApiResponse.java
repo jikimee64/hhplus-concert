@@ -1,13 +1,13 @@
-package hhplus.concert.api.support;
+package hhplus.concert.interfaces.api.support;
 
-import hhplus.concert.api.support.error.ErrorCode;
-import hhplus.concert.api.support.error.ErrorMessage;
+import hhplus.concert.interfaces.api.support.error.ErrorCode;
+import hhplus.concert.interfaces.api.support.error.ErrorMessage;
 import lombok.Getter;
 
 import java.util.HashMap;
 
-import static hhplus.concert.api.support.ResultType.FAIL;
-import static hhplus.concert.api.support.ResultType.SUCCESS;
+import static hhplus.concert.interfaces.api.support.ResultType.FAIL;
+import static hhplus.concert.interfaces.api.support.ResultType.SUCCESS;
 
 @Getter
 public class ApiResponse<T> {

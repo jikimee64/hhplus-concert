@@ -1,4 +1,4 @@
-package hhplus.concert.api.support.error;
+package hhplus.concert.interfaces.api.support.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

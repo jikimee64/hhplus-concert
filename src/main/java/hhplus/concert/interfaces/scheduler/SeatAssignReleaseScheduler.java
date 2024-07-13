@@ -1,4 +1,4 @@
-package hhplus.concert.scheduler;
+package hhplus.concert.interfaces.scheduler;
 
 import hhplus.concert.domain.SeatAssignReleaseChecker;
 import lombok.RequiredArgsConstructor;

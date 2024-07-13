@@ -1,6 +1,6 @@
-package hhplus.concert.api.support;
+package hhplus.concert.interfaces.api.support;
 
-import hhplus.concert.api.support.error.ErrorCode;
+import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import lombok.Getter;
 
 @Getter

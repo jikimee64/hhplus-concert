@@ -1,4 +1,4 @@
-package hhplus.concert.api.v1.concert.response;
+package hhplus.concert.interfaces.api.v1.concert.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

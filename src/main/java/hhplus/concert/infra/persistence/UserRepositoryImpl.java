@@ -1,7 +1,7 @@
 package hhplus.concert.infra.persistence;
 
-import hhplus.concert.api.support.ApiException;
-import hhplus.concert.api.support.error.ErrorCode;
+import hhplus.concert.interfaces.api.support.ApiException;
+import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.domain.User;
 import hhplus.concert.domain.UserRepository;
 import lombok.RequiredArgsConstructor;

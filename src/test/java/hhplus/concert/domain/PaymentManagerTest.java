@@ -1,8 +1,8 @@
 package hhplus.concert.domain;
 
 import hhplus.concert.IntegrationTest;
-import hhplus.concert.api.support.ApiException;
-import hhplus.concert.api.support.error.ErrorCode;
+import hhplus.concert.interfaces.api.support.ApiException;
+import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.infra.persistence.*;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;

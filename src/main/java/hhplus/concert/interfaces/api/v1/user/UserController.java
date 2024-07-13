@@ -1,8 +1,8 @@
-package hhplus.concert.api.v1.user;
+package hhplus.concert.interfaces.api.v1.user;
 
-import hhplus.concert.api.support.ApiResponse;
-import hhplus.concert.api.v1.user.reqeust.ChargeCashRequest;
-import hhplus.concert.api.v1.user.response.SelectCashResponse;
+import hhplus.concert.interfaces.api.support.ApiResponse;
+import hhplus.concert.interfaces.api.v1.user.reqeust.ChargeCashRequest;
+import hhplus.concert.interfaces.api.v1.user.response.SelectCashResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
