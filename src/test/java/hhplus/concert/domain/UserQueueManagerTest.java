@@ -134,7 +134,7 @@ class UserQueueManagerTest extends IntegrationTest {
         );
 
         // when
-        Integer waitingNumber = userQueueManager.selectWaitingNumber(token, concertScheduleId, userId);
+        Integer waitingNumber = userQueueManager.selectWaitingNumber(token, concertScheduleId);
 
         // then
         assertThat(waitingNumber).isEqualTo(3L);

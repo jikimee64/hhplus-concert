@@ -59,15 +59,14 @@ class UserQueueJpaRepositoryTest extends IntegrationTest {
         // given
         Long userId = 1L;
         Long concertScheduleId = 1L;
-        userQueueJpaRepository.save(new UserQueue(userId, concertScheduleId, UserQueueStatus.WAITING));
+        userQueueJpaRepository.save(new UserQueue(userId, concertScheduleId, "token", UserQueueStatus.WAITING));
         LocalDateTime updatedExpiredAt = LocalDateTime.now().plusMinutes(10);
 
         // when
         Integer updated = userQueueJpaRepository.updateStatusAndExpiredAt(
                 UserQueueStatus.PROGRESS,
                 updatedExpiredAt,
-                concertScheduleId,
-                userId
+                "token"
         );
 
         // then
