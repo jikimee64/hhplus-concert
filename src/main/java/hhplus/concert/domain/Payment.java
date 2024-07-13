@@ -33,7 +33,31 @@ public class Payment {
         this.createdAt = createdAt;
     }
 
+    public Payment(Long userId, Long reservationId, Integer price) {
+        this.userId = userId;
+        this.reservationId = reservationId;
+        this.price = price;
+        this.status = PaymentStatus.PROGRESS;
+        this.createdAt = LocalDateTime.now();
+    }
+
     public Payment(Long userId, Long reservationId, PaymentStatus status) {
         this(null, userId, reservationId, null, status, LocalDateTime.now());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public PaymentStatus getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

@@ -44,13 +44,12 @@ public interface UserQueueJpaRepository extends JpaRepository<UserQueue, Long> {
     @Modifying
     @Query("""
                 UPDATE UserQueue uq SET uq.expiredAt =:expiredAt, uq.status = :status
-                WHERE uq.userId =:userId AND uq.concertScheduleId =:concertScheduleId
+                WHERE uq.token =:token
            """)
     Integer updateStatusAndExpiredAt(
             @Param("status") UserQueueStatus status,
             @Param("expiredAt") LocalDateTime expiredAt,
-            @Param("userId") Long userId,
-            @Param("concertScheduleId") Long concertScheduleId
+            @Param("userId") String token
     );
 
     @Modifying
