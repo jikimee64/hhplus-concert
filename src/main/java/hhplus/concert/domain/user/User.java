@@ -1,5 +1,7 @@
 package hhplus.concert.domain.user;
 
+import hhplus.concert.interfaces.api.support.ApiException;
+import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,6 +45,9 @@ public class User {
     }
 
     public void subtractAmount(int amount) {
+        if (this.amount < amount) {
+            throw new ApiException(ErrorCode.E005, "userAmount = " + amount + "this.amount = " + this.amount);
+        }
         this.amount -= amount;
     }
 
