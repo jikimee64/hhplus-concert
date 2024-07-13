@@ -1,0 +1,36 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  jwt:
+    secret: 4c0bc59fdf5ce797e7f299280e17898d47117521d0bef19072a80e6613b0efffde5b8dcd0b6377119170918848556799fab6ad3f57775eb9501f2f55a12a430c
+    expiredMs: 86400000 # 1일
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate.format_sql: true
+      hibernate.use_sql_comments: false
+    defer-datasource-initialization: true
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:concert;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=USER
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+user-queue:
+  max-waiting-number: 1000
+  queue-token-expire-time: 10 # minute

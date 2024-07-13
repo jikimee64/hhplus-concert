@@ -1,0 +1,9 @@
+springdoc:
+  packages-to-scan: hhplus.concert.api.v1
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true # 스웨거 기본 접속 비활성화 ( /swagger-ui/index.html )
+    display-request-duration: true # API 요청 시간 표시
+    operations-sorter: alpha # 알파벳 순서로 API 정렬
