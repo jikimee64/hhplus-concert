@@ -2,6 +2,10 @@ package hhplus.concert.infra.persistence;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import hhplus.concert.domain.*;
+import hhplus.concert.domain.concert.Reservation;
+import hhplus.concert.domain.concert.ReservationStatus;
+import hhplus.concert.domain.concert.SeatQueryDto;
+import hhplus.concert.domain.pay.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

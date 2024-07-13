@@ -1,7 +1,7 @@
 package hhplus.concert.infra.persistence;
 
-import hhplus.concert.domain.Reservation;
-import hhplus.concert.domain.ReservationStatus;
+import hhplus.concert.domain.concert.Reservation;
+import hhplus.concert.domain.concert.ReservationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

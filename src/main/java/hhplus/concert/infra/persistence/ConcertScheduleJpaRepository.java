@@ -1,7 +1,7 @@
 package hhplus.concert.infra.persistence;
 
-import hhplus.concert.domain.ConcertSchedule;
-import hhplus.concert.domain.TotalSeatStatus;
+import hhplus.concert.domain.concert.ConcertSchedule;
+import hhplus.concert.domain.concert.TotalSeatStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

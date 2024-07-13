@@ -1,6 +1,6 @@
 package hhplus.concert.interfaces.scheduler;
 
-import hhplus.concert.domain.UserQueueTokenChecker;
+import hhplus.concert.domain.userqueue.UserQueueTokenChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

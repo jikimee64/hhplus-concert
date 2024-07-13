@@ -1,15 +1,12 @@
 package hhplus.concert.infra.persistence;
 
-import hhplus.concert.domain.UserQueue;
-import hhplus.concert.domain.UserQueueStatus;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import hhplus.concert.domain.userqueue.UserQueue;
+import hhplus.concert.domain.userqueue.UserQueueStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
