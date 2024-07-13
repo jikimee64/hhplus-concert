@@ -49,7 +49,7 @@ public interface UserQueueJpaRepository extends JpaRepository<UserQueue, Long> {
     Integer updateStatusAndExpiredAt(
             @Param("status") UserQueueStatus status,
             @Param("expiredAt") LocalDateTime expiredAt,
-            @Param("userId") String token
+            @Param("token") String token
     );
 
     @Modifying
