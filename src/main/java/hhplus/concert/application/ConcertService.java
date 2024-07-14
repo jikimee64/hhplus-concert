@@ -17,17 +17,14 @@ public class ConcertService {
     private final ConcertManager concertManager;
 
     public List<ConcertSchedule> selectConcertSchedule(String token, Long concertId, String status){
-        userQueueManager.validateTopExpiredBy(token);
         return concertFinder.selectConcertScheduleBy(concertId, status);
     }
 
     public List<SeatDto> selectSeat(String token, Long concertScheduleId){
-        userQueueManager.validateTopExpiredBy(token);
         return concertFinder.selectSeatBy(concertScheduleId);
     }
 
     public Reservation reserveSeat(String token, LocalDate concertOpenDate, Long concertScheduleId, Long userId, Integer seatPosition, Integer seatAmount){
-        userQueueManager.validateTopExpiredBy(token);
         return concertManager.reserveSeat(concertScheduleId, concertOpenDate, userId, seatPosition, seatAmount);
     }
 }
