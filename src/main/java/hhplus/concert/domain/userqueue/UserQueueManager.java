@@ -4,6 +4,7 @@ import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.support.holder.TimeHolder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +64,7 @@ public class UserQueueManager {
     public void validateTopExpiredBy(String token) {
         UserQueue userQueue = userQueueRepository.findByOrElseThrow(token);
         if (userQueue.isExpired()) {
-            throw new ApiException(ErrorCode.E001);
+            throw new ApiException(ErrorCode.E001, LogLevel.INFO, "token = " + token);
         }
     }
 }

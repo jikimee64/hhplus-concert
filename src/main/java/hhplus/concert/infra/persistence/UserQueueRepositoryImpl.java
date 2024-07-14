@@ -6,6 +6,7 @@ import hhplus.concert.domain.userqueue.UserQueue;
 import hhplus.concert.domain.userqueue.UserQueueRepository;
 import hhplus.concert.domain.userqueue.UserQueueStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     @Override
     public UserQueue findByOrElseThrow(String token) {
         return userQueueJpaRepository.findByToken(token)
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, "UserQueue not found. token = " + token));
+                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "UserQueue not found. token = " + token));
     }
 
     @Override

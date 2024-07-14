@@ -13,6 +13,7 @@ import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.infra.persistence.UserQueueJpaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -40,7 +41,7 @@ public class PaymentManager {
         User user = userRepository.findById(userId);
 
         Reservation selectedReservation = concertRepository.findReservation(concertScheduleId, seatId)
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, "Reservation not found concertScheduleId: " + concertScheduleId + ", seatId: " + seatId));
+                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "Reservation not found concertScheduleId: " + concertScheduleId + ", seatId: " + seatId));
         checkAndProcessPayment(selectedReservation, user);
 
         updateUserQueueStatus(token);
@@ -69,7 +70,7 @@ public class PaymentManager {
     private void checkAndProcessPayment(Reservation reservation, User user) {
         boolean isSufficient = reservation.isUserAmountSufficient(user.getAmount());
         if (!isSufficient) {
-            throw new ApiException(ErrorCode.E005, "seatAmount = " + reservation.getSeatAmount() + "userAmount = " + user.getAmount());
+            throw new ApiException(ErrorCode.E005, LogLevel.INFO, "seatAmount = " + reservation.getSeatAmount() + "userAmount = " + user.getAmount());
         }
         user.subtractAmount(reservation.getSeatAmount());
     }
@@ -79,7 +80,7 @@ public class PaymentManager {
      */
     private void updateUserQueueStatus(String token) {
         UserQueue userQueue = userQueueJpaRepository.findByToken(token)
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, "UserQueue not found token: " + token));
+                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "UserQueue not found token: " + token));
         userQueue.updateStatusDone(UserQueueStatus.DONE);
     }
 
