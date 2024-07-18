@@ -2,10 +2,7 @@ package hhplus.concert.domain.user;
 
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +17,9 @@ public class User {
     private String userId;
 
     private int amount;
+
+    @Version
+    private Integer version;
 
     public User(Long id, String userId, int amount) {
         this.id = id;
