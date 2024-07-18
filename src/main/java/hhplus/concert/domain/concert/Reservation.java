@@ -1,9 +1,6 @@
 package hhplus.concert.domain.concert;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +13,14 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(
+        name = "reservation",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_reservation_idx_1",
+                        columnNames = {"concert_schedule_id", "seat_id"})
+        }
+)
 public class Reservation {
 
     @Id
