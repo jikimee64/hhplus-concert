@@ -88,7 +88,7 @@
         "result": "FAIL",
         "data": {},
         "error": {
-          "code": "004",
+          "code": "001",
           "message": "유효하지 않은 대기열 토큰입니다."
         }
       }
@@ -126,19 +126,6 @@
             }
           ```
 - **Error Response:**
-    - **Code:** 200 OK
-    - **Content:**
-    ```json
-      {
-        "result": "FAIL",
-        "data": {},
-        "error": {
-          "code": "004",
-          "message": "유효하지 않은 대기열 토큰입니다."
-        }
-      }
-    ```
-
     - **Code:** 200 OK
     - **Content:**
     ```json
@@ -196,19 +183,6 @@
 - **Error Response:**
     - **Code:** 200 OK
     - **Content:**
-    ```json
-      {
-        "result": "FAIL",
-        "data": {},
-        "error": {
-          "code": "004",
-          "message": "유효하지 않은 대기열 토큰입니다."
-        }
-      }
-    ```
-
-    - **Code:** 200 OK
-    - **Content:**
       ```json
         {
           "result": "FAIL",
@@ -251,19 +225,6 @@
         }
       ```
 - **Error Response:**
-    - **Code:** 400 Bad Request
-    - **Content:**
-    ```json
-      {
-        "result": "FAIL",
-        "data": {},
-        "error": {
-          "code": "004",
-          "message": "유효하지 않은 대기열 토큰입니다."
-        }
-      }
-    ```
-
     - **Code:** 200 OK
     - **Content:**
       ```json
@@ -390,19 +351,6 @@
         }
       ```
 - **Error Response:**
-    - **Code:** 200 OK
-    - **Content:**
-    ```json
-      {
-        "result": "FAIL",
-        "data": {},
-        "error": {
-          "code": "004",
-          "message": "유효하지 않은 대기열 토큰입니다."
-        }
-      }
-    ```
-
     - **Code:** 200 OK
     - **Content:**
       ```json
