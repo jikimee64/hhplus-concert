@@ -1,14 +1,12 @@
-package hhplus.concert.application;
+package hhplus.concert.application.concert;
 
-import hhplus.concert.application.dto.ConcertScheduleResult;
-import hhplus.concert.application.dto.ReservationSeatCommand;
-import hhplus.concert.application.dto.SeatResult;
+import hhplus.concert.application.concert.dto.ConcertScheduleResult;
+import hhplus.concert.application.concert.dto.ReservationSeatCommand;
+import hhplus.concert.application.concert.dto.SeatResult;
 import hhplus.concert.domain.concert.*;
-import hhplus.concert.domain.userqueue.UserQueueManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service

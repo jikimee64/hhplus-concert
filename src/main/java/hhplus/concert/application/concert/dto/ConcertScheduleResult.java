@@ -1,4 +1,4 @@
-package hhplus.concert.application.dto;
+package hhplus.concert.application.concert.dto;
 
 import hhplus.concert.domain.concert.ConcertSchedule;
 

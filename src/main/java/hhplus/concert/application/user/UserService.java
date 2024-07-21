@@ -1,4 +1,4 @@
-package hhplus.concert.application;
+package hhplus.concert.application.user;
 
 import hhplus.concert.domain.user.UserCashManager;
 import lombok.RequiredArgsConstructor;

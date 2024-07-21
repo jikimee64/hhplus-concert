@@ -1,4 +1,4 @@
-package hhplus.concert.application;
+package hhplus.concert.application.userqueue;
 
 import hhplus.concert.domain.userqueue.UserQueueManager;
 import lombok.RequiredArgsConstructor;

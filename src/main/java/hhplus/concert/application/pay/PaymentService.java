@@ -1,13 +1,10 @@
-package hhplus.concert.application;
+package hhplus.concert.application.pay;
 
-import hhplus.concert.application.dto.PayCommand;
+import hhplus.concert.application.pay.dto.PayCommand;
 import hhplus.concert.domain.pay.PaymentManager;
 import hhplus.concert.domain.pay.Receipt;
-import hhplus.concert.domain.userqueue.UserQueueManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
