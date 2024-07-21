@@ -168,4 +168,72 @@ class UserQueueManagerTest extends IntegrationTest {
         );
     }
 
+    @Test
+    void 대기열_토큰_상태가_PROGRESS인_토큰중_만료_시간값이_30분이_지났을_경우_EXPIRE로_업데이트한다() {
+        // given
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime enteredAt = LocalDateTime.parse("2024-01-01 00:00:00", formatter);
+        LocalDateTime expiredAt = LocalDateTime.parse("2024-01-01 00:30:01", formatter);
+
+        userQueueJpaRepository.save(
+                new UserQueue(1L, 1L, "", UserQueueStatus.PROGRESS, enteredAt, expiredAt)
+        );
+
+        Long userId = 1L;
+        UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(userId, 1L);
+        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
+
+        // when
+        Integer updatedCount = userQueueManager.updateExpireConditionToken();
+
+        // then
+        assertThat(updatedCount).isEqualTo(1);
+    }
+
+    @Test
+    void 대기열_사이즈가_남을_경우_대기중인_유저를_대기열_사이즈를_충족시키는_제한까지_진입시킨다() {
+        // given
+        Long userId = 1L;
+        UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(userId, 1L);
+        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime enteredAt = LocalDateTime.parse("2024-01-01 00:00:00", formatter);
+        LocalDateTime expiredAt = LocalDateTime.parse("2024-01-01 00:30:01", formatter);
+
+        userQueueJpaRepository.save(
+                new UserQueue(1L, 1L, "", UserQueueStatus.PROGRESS, enteredAt, expiredAt)
+        );
+
+        userQueueJpaRepository.save(
+                new UserQueue(1L, 1L, "", UserQueueStatus.PROGRESS, enteredAt, expiredAt)
+        );
+
+        userQueueJpaRepository.save(
+                new UserQueue(1L, 1L, "", UserQueueStatus.WAITING, enteredAt, expiredAt)
+        );
+        userQueueJpaRepository.save(
+                new UserQueue(1L, 1L, "", UserQueueStatus.WAITING, enteredAt, expiredAt)
+        );
+
+        userQueueJpaRepository.save(
+                new UserQueue(1L, 1L, "", UserQueueStatus.WAITING, enteredAt, expiredAt)
+        );
+
+        userQueueJpaRepository.save(
+                new UserQueue(1L, 1L, "", UserQueueStatus.WAITING, enteredAt, expiredAt)
+        );
+
+        // when
+        userQueueManager.periodicallyEnterUserQueue();
+
+        // then
+        List<UserQueue> progress = userQueueJpaRepository.findAllByStatus(UserQueueStatus.PROGRESS);
+        List<UserQueue> waiting = userQueueJpaRepository.findAllByStatus(UserQueueStatus.WAITING);
+
+        assertThat(progress.size()).isEqualTo(5);
+        assertThat(waiting.size()).isEqualTo(1);
+    }
+
 }

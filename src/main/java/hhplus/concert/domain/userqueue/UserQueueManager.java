@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -67,4 +69,32 @@ public class UserQueueManager {
             throw new ApiException(ErrorCode.E001, LogLevel.INFO, "token = " + token);
         }
     }
+
+    /**
+     * 토큰 만료 여부 조건일 경우 토큰 상태값을 업데이트 한다.
+     */
+    @Transactional
+    public Integer updateExpireConditionToken() {
+        return userQueueRepository.updateExpireConditionToken();
+    }
+
+    /**
+     * 콘서트 스케줄 마다 대기열 제한인원에 허용하는 만큼 대기중인 유저를 진입시킨다
+     */
+    @Transactional
+    public void periodicallyEnterUserQueue() {
+        Map<Long, List<UserQueue>> groupingUserQueue = userQueueRepository.findAllBy(UserQueueStatus.PROGRESS).stream()
+                .collect(Collectors.groupingBy(UserQueue::getConcertScheduleId, Collectors.toList()));
+
+        groupingUserQueue.forEach(
+                (concertScheduleId, userQueues) -> {
+                    Integer remainEnteringSize = userQueueConstant.getMaxWaitingNumber() - userQueues.size();
+                    if (remainEnteringSize > 0) {
+                        List<UserQueue> waitingUserQueues = userQueueRepository.findAllWaitingBy(concertScheduleId, remainEnteringSize);
+                        userQueueRepository.updateStatusByIds(waitingUserQueues.stream().map(UserQueue::getId).toList(), UserQueueStatus.PROGRESS);
+                    }
+                }
+        );
+    }
+
 }
