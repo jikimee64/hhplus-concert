@@ -17,6 +17,7 @@ import java.util.Optional;
 public class ConcertRepositoryImpl implements ConcertRepository {
 
     private final ReservationJpaRepository reservationJpaRepository;
+    private final PaymentJpaRepository paymentJpaRepository;
     private final ConcertScheduleJpaRepository concertScheduleJpaRepository;
     private final ConcertSeatJpaRepository concertSeatJpaRepository;
     private final ConcertQueryRepository concertQueryRepository;
@@ -69,6 +70,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     @Override
     public void deleteReservation(List<Reservation> reservations) {
         reservationJpaRepository.deleteAllInBatch(reservations);
+    }
+
+    @Override
+    public void deletePaymentBy(List<Long> reservationIds) {
+        paymentJpaRepository.deleteAllBy(reservationIds);
     }
 
     @Override

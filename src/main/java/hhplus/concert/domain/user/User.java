@@ -5,6 +5,7 @@ import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.logging.LogLevel;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,26 +15,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String userId;
+    private String loginId;
 
     private int amount;
 
     @Version
     private Integer version;
 
-    public User(Long id, String userId, int amount) {
+    public User(Long id, String loginId, int amount) {
         this.id = id;
-        this.userId = userId;
+        this.loginId = loginId;
         this.amount = amount;
     }
 
-    public User(String userId, int amount) {
-        this.userId = userId;
+    public User(String loginId, int amount) {
+        this.loginId = loginId;
         this.amount = amount;
     }
 
-    public User(String userId) {
-        this(null, userId, 0);
+    public User(String loginId) {
+        this(null, loginId, 0);
     }
 
     public Long getId() {
@@ -46,7 +47,7 @@ public class User {
 
     public void subtractAmount(int amount) {
         if (this.amount < amount) {
-            throw new ApiException(ErrorCode.E005, "userAmount = " + amount + "this.amount = " + this.amount);
+            throw new ApiException(ErrorCode.E005, LogLevel.INFO, "userAmount = " + amount + "this.amount = " + this.amount);
         }
         this.amount -= amount;
     }
