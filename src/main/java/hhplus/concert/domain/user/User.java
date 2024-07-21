@@ -2,13 +2,9 @@ package hhplus.concert.domain.user;
 
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.logging.LogLevel;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,6 +17,9 @@ public class User {
     private String userId;
 
     private int amount;
+
+    @Version
+    private Integer version;
 
     public User(Long id, String userId, int amount) {
         this.id = id;
@@ -47,7 +46,7 @@ public class User {
 
     public void subtractAmount(int amount) {
         if (this.amount < amount) {
-            throw new ApiException(ErrorCode.E005, LogLevel.INFO, "userAmount = " + amount + "this.amount = " + this.amount);
+            throw new ApiException(ErrorCode.E005, "userAmount = " + amount + "this.amount = " + this.amount);
         }
         this.amount -= amount;
     }

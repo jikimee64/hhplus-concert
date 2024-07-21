@@ -1,14 +1,19 @@
 package hhplus.concert.domain.concert;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        name = "concert_seat",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_concert_seat_idx_1",
+                        columnNames = {"concert_schedule_id", "position"})
+        }
+)
 public class ConcertSeat {
 
     @Id
