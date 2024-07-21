@@ -4,6 +4,7 @@ import hhplus.concert.domain.concert.*;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -46,7 +47,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     @Override
     public ConcertSchedule findConcertSchedule(Long concertScheduleId) {
         return concertScheduleJpaRepository.findById(concertScheduleId)
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, "ConcertSchedule not found concertScheduleId = " + concertScheduleId));
+                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "ConcertSchedule not found concertScheduleId = " + concertScheduleId));
     }
 
     @Override
