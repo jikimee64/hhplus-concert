@@ -1,5 +1,8 @@
 package hhplus.concert.application;
 
+import hhplus.concert.application.dto.ConcertScheduleResult;
+import hhplus.concert.application.dto.ReservationSeatCommand;
+import hhplus.concert.application.dto.SeatResult;
 import hhplus.concert.domain.concert.*;
 import hhplus.concert.domain.userqueue.UserQueueManager;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +19,26 @@ public class ConcertService {
     private final ConcertFinder concertFinder;
     private final ConcertManager concertManager;
 
-    public List<ConcertSchedule> selectConcertSchedule(String token, Long concertId, String status){
+    public List<ConcertScheduleResult> selectConcertSchedule(String token, Long concertId, String status) {
         userQueueManager.validateTopExpiredBy(token);
-        return concertFinder.selectConcertScheduleBy(concertId, status);
+        List<ConcertSchedule> concertSchedules = concertFinder.selectConcertScheduleBy(concertId, status);
+        return ConcertScheduleResult.from(concertSchedules);
     }
 
-    public List<SeatDto> selectSeat(String token, Long concertScheduleId){
+    public List<SeatResult> selectSeat(String token, Long concertScheduleId) {
         userQueueManager.validateTopExpiredBy(token);
-        return concertFinder.selectSeatBy(concertScheduleId);
+        List<SeatDto> seatDtos = concertFinder.selectSeatBy(concertScheduleId);
+        return SeatResult.from(seatDtos);
     }
 
-    public Reservation reserveSeat(String token, LocalDate concertOpenDate, Long concertScheduleId, Long userId, Integer seatPosition, Integer seatAmount){
+    public void reserveSeat(String token, ReservationSeatCommand command) {
         userQueueManager.validateTopExpiredBy(token);
-        return concertManager.reserveSeat(concertScheduleId, concertOpenDate, userId, seatPosition, seatAmount);
+        concertManager.reserveSeat(
+                command.concertScheduleId(),
+                command.concertOpenDate(),
+                command.userId(),
+                command.seatPosition(),
+                command.seatAmount()
+        );
     }
 }
