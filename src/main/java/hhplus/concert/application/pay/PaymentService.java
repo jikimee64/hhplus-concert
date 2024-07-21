@@ -1,8 +1,9 @@
 package hhplus.concert.application.pay;
 
 import hhplus.concert.application.pay.dto.PayCommand;
+import hhplus.concert.application.pay.dto.ReceiptResult;
 import hhplus.concert.domain.pay.PaymentManager;
-import hhplus.concert.domain.pay.Receipt;
+import hhplus.concert.domain.pay.dto.Receipt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,8 @@ public class PaymentService {
 
     private final PaymentManager paymentManager;
 
-    public Receipt pay(String token, PayCommand command) {
-        return paymentManager.pay(token, command.userId(), command.concertScheduleId(), command.seatId(), command.concertOpenDate());
+    public ReceiptResult pay(String token, PayCommand command) {
+        Receipt receipt = paymentManager.pay(token, command.userId(), command.concertScheduleId(), command.seatId(), command.concertOpenDate());
+        return ReceiptResult.from(receipt);
     }
 }

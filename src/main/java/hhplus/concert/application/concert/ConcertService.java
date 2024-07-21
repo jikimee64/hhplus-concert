@@ -4,6 +4,7 @@ import hhplus.concert.application.concert.dto.ConcertScheduleResult;
 import hhplus.concert.application.concert.dto.ReservationSeatCommand;
 import hhplus.concert.application.concert.dto.SeatResult;
 import hhplus.concert.domain.concert.*;
+import hhplus.concert.domain.concert.dto.SeatDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

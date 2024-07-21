@@ -4,6 +4,7 @@ import hhplus.concert.domain.concert.ConcertRepository;
 import hhplus.concert.domain.concert.ConcertSchedule;
 import hhplus.concert.domain.concert.Reservation;
 import hhplus.concert.domain.concert.ReservationStatus;
+import hhplus.concert.domain.pay.dto.Receipt;
 import hhplus.concert.domain.user.User;
 import hhplus.concert.domain.user.UserRepository;
 import hhplus.concert.domain.userqueue.UserQueue;

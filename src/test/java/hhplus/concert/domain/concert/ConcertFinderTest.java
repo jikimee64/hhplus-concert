@@ -1,6 +1,7 @@
 package hhplus.concert.domain.concert;
 
 import hhplus.concert.IntegrationTest;
+import hhplus.concert.domain.concert.dto.SeatDto;
 import hhplus.concert.infra.persistence.ConcertJpaRepository;
 import hhplus.concert.infra.persistence.ConcertScheduleJpaRepository;
 import hhplus.concert.infra.persistence.ConcertSeatJpaRepository;

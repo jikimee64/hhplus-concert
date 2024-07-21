@@ -2,6 +2,7 @@ package hhplus.concert.domain.pay;
 
 import hhplus.concert.IntegrationTest;
 import hhplus.concert.domain.concert.*;
+import hhplus.concert.domain.pay.dto.Receipt;
 import hhplus.concert.domain.user.User;
 import hhplus.concert.domain.userqueue.UserQueue;
 import hhplus.concert.domain.userqueue.UserQueueStatus;

@@ -1,5 +1,7 @@
 package hhplus.concert.domain.concert;
 
+import hhplus.concert.domain.concert.dto.SeatDto;
+import hhplus.concert.domain.concert.dto.SeatQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

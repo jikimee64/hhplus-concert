@@ -1,5 +1,7 @@
 package hhplus.concert.domain.concert;
 
+import hhplus.concert.domain.concert.dto.SeatQueryDto;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
