@@ -1,15 +1,18 @@
 package hhplus.concert.domain.user;
 
-import hhplus.concert.IntegrationTest;
 import hhplus.concert.infra.persistence.UserJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-public class UserCashManagerConcurrencyTest extends IntegrationTest {
+@ActiveProfiles("test")
+@SpringBootTest
+public class UserCashManagerConcurrencyTest {
 
     @Autowired
     private UserCashManager userCashManager;
@@ -35,7 +38,7 @@ public class UserCashManagerConcurrencyTest extends IntegrationTest {
                 })
         ).join();
 
-        Thread.sleep(1000L);
+        Thread.sleep(100L);
 
         // then
         Integer amount = userCashManager.selectAmount(savedUser.getId());

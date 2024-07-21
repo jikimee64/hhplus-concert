@@ -10,7 +10,6 @@ import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.infra.persistence.*;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,8 +20,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Transactional
-class PaymentManagerTest extends IntegrationTest {
+public class PaymentManagerTest extends IntegrationTest {
 
     @Autowired
     private UserJpaRepository userJpaRepository;

@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-@Transactional
 class UserQueueTokenCheckerTest extends IntegrationTest {
 
     @Autowired

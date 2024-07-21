@@ -12,15 +12,16 @@ import hhplus.concert.domain.userqueue.UserQueueStatus;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.infra.persistence.UserQueueJpaRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Component
+@Transactional
 @RequiredArgsConstructor
 public class PaymentManager {
 
@@ -37,7 +38,6 @@ public class PaymentManager {
      * - 결제 데이터 삽입
      * - 영수증 반환
      */
-    @Transactional
     public Receipt pay(String token, Long userId, Long concertScheduleId, Long seatId, LocalDate concertOpenDate) {
         User user = userRepository.findById(userId);
 

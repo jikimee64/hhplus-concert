@@ -19,7 +19,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Transactional
 class ConcertFinderTest extends IntegrationTest {
 
     @Autowired
