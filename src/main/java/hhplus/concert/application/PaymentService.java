@@ -16,7 +16,6 @@ public class PaymentService {
     private final UserQueueManager userQueueManager;
 
     public Receipt pay(String token, Long userId, Long concertScheduleId, Long seatId, LocalDate concertOpenDate) {
-        userQueueManager.validateTopExpiredBy(token);
         return paymentManager.pay(token, userId, concertScheduleId, seatId, concertOpenDate);
     }
 }
