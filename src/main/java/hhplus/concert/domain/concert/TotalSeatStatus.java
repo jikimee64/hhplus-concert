@@ -4,6 +4,7 @@ import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.boot.logging.LogLevel;
 
 import java.util.Arrays;
 
@@ -19,7 +20,7 @@ public enum TotalSeatStatus {
         return Arrays.stream(TotalSeatStatus.values())
                 .filter(totalSeatStatus -> totalSeatStatus.status.equals(status))
                 .findFirst()
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, "TotalSeatStatus not found status: " + status));
+                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "TotalSeatStatus not found status: " + status));
     }
 
 }

@@ -19,6 +19,11 @@ public class ApiControllerAdvice {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<?>> handleCoreApiException(ApiException e) {
+        switch (e.getLogLevel()) {
+            case ERROR -> log.error("ApiException : {}", e.getMessage(), e);
+            case WARN -> log.warn("ApiException : {}", e.getMessage(), e);
+            default -> log.info("ApiException : {}", e.getMessage(), e);
+        }
         return new ResponseEntity<>(ApiResponse.error(e.getErrorCode(), e.getData()), OK);
     }
 

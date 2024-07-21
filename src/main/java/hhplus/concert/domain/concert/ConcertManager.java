@@ -3,6 +3,7 @@ package hhplus.concert.domain.concert;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ public class ConcertManager {
     public Reservation reserveSeat(Long concertScheduleId, LocalDate concertOpenDate, Long userId, Integer seatPosition, Integer seatAmount) {
         ConcertSchedule concertSchedule = concertRepository.findConcertSchedule(concertScheduleId);
         if (isEqualConcertOpenDate(concertOpenDate, concertSchedule.getOpenDate())) {
-            throw new ApiException(ErrorCode.E006, "requestConcertOpenDate = " + concertOpenDate + ", concertOpenDate = " + concertSchedule.getOpenDate());
+            throw new ApiException(ErrorCode.E006, LogLevel.INFO, "requestConcertOpenDate = " + concertOpenDate + ", concertOpenDate = " + concertSchedule.getOpenDate());
         }
 
         ConcertSeat concertSeat;
@@ -35,7 +36,7 @@ public class ConcertManager {
         if (optConcertSeat.isPresent()) {
             concertSeat = optConcertSeat.get();
             if (isSeatReserved(concertScheduleId, concertSeat.getId())) {
-                throw new ApiException(ErrorCode.E002, "concertScheduleId = " + concertScheduleId + ", seatId = " + concertSeat.getId());
+                throw new ApiException(ErrorCode.E002, LogLevel.INFO, "concertScheduleId = " + concertScheduleId + ", seatId = " + concertSeat.getId());
             }
         } else {
             concertSeat = concertRepository.saveSeat(
