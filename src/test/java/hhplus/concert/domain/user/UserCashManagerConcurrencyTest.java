@@ -7,6 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -43,6 +46,64 @@ public class UserCashManagerConcurrencyTest {
         // then
         Integer amount = userCashManager.selectAmount(savedUser.getId());
         assertThat(amount).isEqualTo(10000 + 1000 + 2000 + 3000);
+    }
+
+    @Test
+    void 잔액_충전_동시성_테스트_낙관적락() throws InterruptedException {
+        // given
+        User savedUser = userJpaRepository.save(new User("dncjf64", 10000));
+
+        int numberOfThreads = 10;
+        ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+
+        // when
+        for (int i = 0; i < numberOfThreads; i++) {
+            service.execute(() -> {
+                try {
+                    // when
+                    userCashManager.chargeAmount(savedUser.getId(), 1000);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+
+        // then
+        Integer amount = userCashManager.selectAmount(savedUser.getId());
+        assertThat(amount).isEqualTo(10000 + (1000 * numberOfThreads));
+    }
+
+    @Test
+    void 잔액_충전_동시성_테스트_비관적락() throws InterruptedException {
+        // given
+        User savedUser = userJpaRepository.save(new User("dncjf64", 10000));
+
+        int numberOfThreads = 10;
+        ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+
+        // when
+        for (int i = 0; i < numberOfThreads; i++) {
+            service.execute(() -> {
+                try {
+                    // when
+                    userCashManager.chargeAmountWithLock(savedUser.getId(), 1000);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+
+        // then
+        Integer amount = userCashManager.selectAmount(savedUser.getId());
+        assertThat(amount).isEqualTo(10000 + (1000 * numberOfThreads));
     }
 
 }

@@ -4,4 +4,5 @@
 ### [시퀀스 다이어그램](docs/sequence.md)
 ### [API 명세서](docs/api_spec.md)
 ### [ERD](docs/erd.md)
+### [동시성 시나리오 분석](docs/concurrency.md)
 
