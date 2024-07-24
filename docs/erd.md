@@ -40,6 +40,7 @@ erDiagram
         LocalDateTime start_at "콘서트 시작 시간"
         LocalDateTime end_at "콘서트 종료 시간"
         int total_seat "전체 좌석 수"
+        int reservation_seat "남은 좌석 수"
         varchar total_seat_status "전체 좌석 마감 상태(SOLD_OUT, AVAILABLE)"
     }
 

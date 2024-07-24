@@ -209,9 +209,7 @@
       ```json
       {
         "userId": 1,
-        "seatPosition": 1,
-        "seatAmount": 10000,
-        "concertOpenDate": "2024-01-01"
+        "seatId": 1
       }
       ```
 - **Success Response:**

@@ -75,32 +75,25 @@ public class ConcertController {
     @Operation(summary = "좌석 조회", description = "특정 날짜의 좌석을 조회한다")
     @GetMapping("/{concertScheduleId}/reservation/seat")
     public ApiResponse<List<SeatResult>> selectReservationSeat(
-            @Parameter(description = "대기열 토큰")
-            @RequestHeader("Authorization") String queueToken,
             @Parameter(description = "콘서트 스케줄 고유값")
             @PathVariable("concertScheduleId") Long concertScheduleId
     ) {
-        List<SeatResult> seatResults = concertService.selectSeat(queueToken, concertScheduleId);
+        List<SeatResult> seatResults = concertService.selectSeat(concertScheduleId);
         return ApiResponse.success(seatResults);
     }
 
     @Operation(summary = "좌석을 예약한다", description = "좌석을 예약한다")
     @PostMapping("/{concertScheduleId}/reservation/seat")
     public ApiResponse<?> reserveSeat(
-            @Parameter(description = "대기열 토큰")
-            @RequestHeader("Authorization") String queueToken,
             @Parameter(description = "콘서트 스케줄 고유값")
             @PathVariable("concertScheduleId") Long concertScheduleId,
             @RequestBody ReserveSeatRequest request
     ) {
         concertService.reserveSeat(
-                queueToken,
                 new ReservationSeatCommand(
                         concertScheduleId,
                         request.userId(),
-                        request.seatPosition(),
-                        request.seatAmount(),
-                        request.concertOpenDate()
+                        request.seatId()
 
                 )
         );

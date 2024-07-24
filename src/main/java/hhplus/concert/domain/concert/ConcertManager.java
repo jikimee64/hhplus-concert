@@ -17,42 +17,18 @@ public class ConcertManager {
 
     private final ConcertRepository concertRepository;
 
-    /**
-     * 좌석 임시 예약
-     * - 콘서트 스케줄의 개최 날짜가 요청값과 일치하는지 확인하여 일치하지 않을 경우 예외 처리
-     * - 해당 콘서트 스케줄에 해당하는 좌석번호 데이터가 좌석 테이블에 존재할 경우 예약 여부 확인하여 존재하면 예외 처리
-     * - 존재하지 않을 경우 좌석 테이블에 좌석번호 데이터 저장
-     * - 예약 데이터
-     */
-
-    public Reservation reserveSeat(Long concertScheduleId, LocalDate concertOpenDate, Long userId, Integer seatPosition, Integer seatAmount) {
-        ConcertSchedule concertSchedule = concertRepository.findConcertSchedule(concertScheduleId);
-        if (isEqualConcertOpenDate(concertOpenDate, concertSchedule.getOpenDate())) {
-            throw new ApiException(ErrorCode.E006, LogLevel.INFO, "requestConcertOpenDate = " + concertOpenDate + ", concertOpenDate = " + concertSchedule.getOpenDate());
+    public Reservation reserveSeat(ConcertSchedule concertSchedule, Long userId, Long seatId) {
+        Long concertScheduleId = concertSchedule.getId();
+        if (isSeatReserved(concertScheduleId, seatId)) {
+            throw new ApiException(ErrorCode.E002, LogLevel.INFO, "concertScheduleId = " + concertScheduleId + ", seatId = " + seatId);
         }
-
-        ConcertSeat concertSeat;
-        // 좌석 테이블에 데이터가 존재할 경우 예약 테이블에 예약이 중복으로 존재하는지 검사
-        Optional<ConcertSeat> optConcertSeat = concertRepository.findSeatBy(concertScheduleId, seatPosition);
-        if (optConcertSeat.isPresent()) {
-            concertSeat = optConcertSeat.get();
-            if (isSeatReserved(concertScheduleId, concertSeat.getId())) {
-                throw new ApiException(ErrorCode.E002, LogLevel.INFO, "concertScheduleId = " + concertScheduleId + ", seatId = " + concertSeat.getId());
-            }
-        } else {
-            concertSeat = concertRepository.saveSeat(
-                    new ConcertSeat(concertScheduleId, seatAmount, seatPosition)
-            );
-        }
+        concertSchedule.increaseReservedSeat();
+        ConcertSeat concertSeat = concertRepository.findSeat(seatId);
         return saveReservation(concertSchedule, concertSeat, userId);
     }
 
     private boolean isSeatReserved(Long concertScheduleId, Long seatId) {
         return concertRepository.findReservation(concertScheduleId, seatId).isPresent();
-    }
-
-    private boolean isEqualConcertOpenDate(LocalDate requestConcertOpenDate, LocalDate concertSchedule) {
-        return !requestConcertOpenDate.equals(concertSchedule);
     }
 
     private Reservation saveReservation(ConcertSchedule concertSchedule, ConcertSeat concertSeat, Long userId) {

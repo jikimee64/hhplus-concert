@@ -10,8 +10,7 @@ public interface ConcertRepository {
     List<ConcertSchedule> findConcertScheduleBy(Long concertId, TotalSeatStatus status);
     Optional<Reservation> findReservation(Long concertScheduleId, Long seatId);
     List<SeatQueryDto> findConcertSeat(Long concertScheduleId);
-    ConcertSeat saveSeat(ConcertSeat concertSeat);
-    Optional<ConcertSeat> findSeatBy(Long concertScheduleId, Integer position);
+    ConcertSeat findSeat(Long seatId);
     ConcertSchedule findConcertSchedule(Long concertScheduleId);
     Integer updateReservationStatus(ReservationStatus status, Long concertScheduleId, Long seatId);
     Reservation saveReservation(Reservation reservation);

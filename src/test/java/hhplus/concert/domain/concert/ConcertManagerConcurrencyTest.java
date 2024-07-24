@@ -5,6 +5,7 @@ import hhplus.concert.infra.persistence.ConcertScheduleJpaRepository;
 import hhplus.concert.infra.persistence.ConcertSeatJpaRepository;
 import hhplus.concert.infra.persistence.ReservationJpaRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,8 +59,9 @@ public class ConcertManagerConcurrencyTest {
         ConcertSchedule savedConcertSchedule = concertScheduleJpaRepository.save(
                 new ConcertSchedule(savedConcert, concertOpenDate, now.plusHours(1L), now.plusHours(2L), 50, TotalSeatStatus.AVAILABLE)
         );
-        int seatPosition = 1;
-        int seatAmount = 10000;
+        ConcertSeat savedConcertSeat = concertSeatJpaRepository.save(
+                new ConcertSeat(1L, 10000, 1)
+        );
 
         int numberOfThreads = 100;
         ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
@@ -69,7 +71,7 @@ public class ConcertManagerConcurrencyTest {
             service.execute(() -> {
                 try{
                     // when
-                    concertManager.reserveSeat(savedConcertSchedule.getId(), concertOpenDate, userId, seatPosition, seatAmount);
+                    concertManager.reserveSeat(savedConcertSchedule, userId, savedConcertSeat.getId());
                 }catch (Exception e) {
                     System.out.println(e.getMessage());
                 } finally {
