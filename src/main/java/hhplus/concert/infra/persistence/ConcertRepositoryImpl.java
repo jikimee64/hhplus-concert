@@ -33,6 +33,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
+    public Optional<Reservation> findReservationWithLock(Long concertScheduleId, Long seatId) {
+        return reservationJpaRepository.findReservationWithLock(concertScheduleId, seatId);
+    }
+
+    @Override
     public List<SeatQueryDto> findConcertSeat(Long concertScheduleId) {
         return concertQueryRepository.findConcertSeat(concertScheduleId);
     }

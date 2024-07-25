@@ -4,8 +4,11 @@ import hhplus.concert.infra.persistence.ConcertJpaRepository;
 import hhplus.concert.infra.persistence.ConcertScheduleJpaRepository;
 import hhplus.concert.infra.persistence.ConcertSeatJpaRepository;
 import hhplus.concert.infra.persistence.ReservationJpaRepository;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.EntityManager;
+import org.checkerframework.dataflow.qual.AssertMethod;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,30 +42,28 @@ public class ConcertManagerConcurrencyTest {
     @Autowired
     private ReservationJpaRepository reservationJpaRepository;
 
-    @AfterEach
-    void tearDown() {
-        reservationJpaRepository.deleteAllInBatch();
-        concertScheduleJpaRepository.deleteAll();
-        concertSeatJpaRepository.deleteAll();
-        concertJpaRepository.deleteAll();
-    }
+    private Long userId = 1L;
+    private ConcertSchedule concertSchedule;
+    private ConcertSeat concertSeat;
 
-    @Test
-    void 좌석_임시예약_동시성_테스트() throws InterruptedException {
-        // given
+    @BeforeEach
+    void setUp() {
         LocalDate concertOpenDate = LocalDate.of(2024, 1, 1);
-        Long userId = 1L;
         Concert savedConcert = concertJpaRepository.save(
                 new Concert(1L, "")
         );
         LocalDateTime now = LocalDateTime.now();
-        ConcertSchedule savedConcertSchedule = concertScheduleJpaRepository.save(
+        concertSchedule = concertScheduleJpaRepository.save(
                 new ConcertSchedule(savedConcert, concertOpenDate, now.plusHours(1L), now.plusHours(2L), 50, TotalSeatStatus.AVAILABLE)
         );
-        ConcertSeat savedConcertSeat = concertSeatJpaRepository.save(
+        concertSeat = concertSeatJpaRepository.save(
                 new ConcertSeat(1L, 10000, 1)
         );
+    }
 
+    @Test
+    void 좌석_임시예약_비관적락_동시성_테스트() throws InterruptedException {
+        // given
         int numberOfThreads = 100;
         ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
         CountDownLatch latch = new CountDownLatch(numberOfThreads);
@@ -71,7 +72,7 @@ public class ConcertManagerConcurrencyTest {
             service.execute(() -> {
                 try{
                     // when
-                    concertManager.reserveSeat(savedConcertSchedule, userId, savedConcertSeat.getId());
+                    concertManager.reserveSeatWithLock(concertSchedule, userId, concertSeat.getId());
                 }catch (Exception e) {
                     System.out.println(e.getMessage());
                 } finally {
@@ -82,7 +83,16 @@ public class ConcertManagerConcurrencyTest {
         latch.await();
 
         // then
-        List<Reservation> reservations = reservationJpaRepository.findByConcertScheduleId(savedConcertSchedule.getId());
+        List<Reservation> reservations = reservationJpaRepository.findByConcertScheduleId(concertSchedule.getId());
         assertThat(reservations).hasSize(1);
     }
+
+    @AfterEach
+    void tearDown() {
+        reservationJpaRepository.deleteAllInBatch();
+        concertScheduleJpaRepository.deleteAll();
+        concertSeatJpaRepository.deleteAll();
+        concertJpaRepository.deleteAll();
+    }
+
 }

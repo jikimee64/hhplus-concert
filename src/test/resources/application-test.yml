@@ -26,10 +26,10 @@ spring:
     console:
       enabled: true
 
-#logging:
-#  level:
-#    org.hibernate.SQL: DEBUG
-#    org.hibernate.orm.jdbc.bind: TRACE
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
 
 user-queue:
   max-waiting-number: 5

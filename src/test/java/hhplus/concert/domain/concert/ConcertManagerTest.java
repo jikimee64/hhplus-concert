@@ -73,8 +73,7 @@ class ConcertManagerTest extends IntegrationTest {
                 () -> assertThat(reservation.getConcertEndAt()).isEqualTo(savedConcertSchedule.getEndAt()),
                 () -> assertThat(reservation.getSeatAmount()).isEqualTo(seatAmount),
                 () -> assertThat(reservation.getSeatPosition()).isEqualTo(seatPosition),
-                () -> assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.TEMP_RESERVED),
-                () -> assertThat(concertSchedule.getReservationSeat()).isEqualTo(1)
+                () -> assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.TEMP_RESERVED)
         );
     }
 
@@ -121,7 +120,7 @@ class ConcertManagerTest extends IntegrationTest {
         );
         LocalDateTime now = LocalDateTime.now();
         ConcertSchedule savedConcertSchedule = concertScheduleJpaRepository.save(
-                new ConcertSchedule(savedConcert, concertOpenDate, now.plusHours(1L), now.plusHours(2L), 50, 50, TotalSeatStatus.AVAILABLE)
+                new ConcertSchedule(savedConcert, concertOpenDate, now.plusHours(1L), now.plusHours(2L), 50, TotalSeatStatus.AVAILABLE)
         );
 
         int seatPosition = 1;
