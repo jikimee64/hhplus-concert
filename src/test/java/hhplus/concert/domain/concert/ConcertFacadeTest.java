@@ -13,16 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class ConcertManagerTest extends IntegrationTest {
+class ConcertFacadeTest extends IntegrationTest {
 
     @Autowired
-    private ConcertManager concertManager;
+    private ConcertService concertService;
 
     @Autowired
     private ConcertJpaRepository concertJpaRepository;
@@ -57,7 +56,7 @@ class ConcertManagerTest extends IntegrationTest {
         int seatPosition = 1;
         int seatAmount = 10000;
         // when
-        Reservation reservation = concertManager.reserveSeat(savedConcertSchedule, userId, savedConcertSeat.getId());
+        Reservation reservation = concertService.reserveSeat(savedConcertSchedule, userId, savedConcertSeat.getId());
 
         // then
         entityManager.flush();
@@ -101,11 +100,12 @@ class ConcertManagerTest extends IntegrationTest {
                         .userId(userId)
                         .concertScheduleId(savedConcertSchedule.getId())
                         .seatId(concertSeat.getId())
+                        .status(ReservationStatus.TEMP_RESERVED)
                         .build()
         );
 
         // when & then
-        assertThatThrownBy(() -> concertManager.reserveSeat(savedConcertSchedule, userId, concertSeat.getId()))
+        assertThatThrownBy(() -> concertService.reserveSeat(savedConcertSchedule, userId, concertSeat.getId()))
                 .isInstanceOf(ApiException.class)
                 .hasMessage(ErrorCode.E002.getMessage());
     }
@@ -120,7 +120,7 @@ class ConcertManagerTest extends IntegrationTest {
         );
         LocalDateTime now = LocalDateTime.now();
         ConcertSchedule savedConcertSchedule = concertScheduleJpaRepository.save(
-                new ConcertSchedule(savedConcert, concertOpenDate, now.plusHours(1L), now.plusHours(2L), 50, TotalSeatStatus.AVAILABLE)
+                new ConcertSchedule(savedConcert, concertOpenDate, now.plusHours(1L), now.plusHours(2L), 50, TotalSeatStatus.SOLD_OUT)
         );
 
         int seatPosition = 1;
@@ -130,7 +130,7 @@ class ConcertManagerTest extends IntegrationTest {
         );
 
         // when & then
-        assertThatThrownBy(() -> concertManager.reserveSeat(savedConcertSchedule, userId, concertSeat.getId()))
+        assertThatThrownBy(() -> concertService.reserveSeat(savedConcertSchedule, userId, concertSeat.getId()))
                 .isInstanceOf(ApiException.class)
                 .hasMessage(ErrorCode.E007.getMessage());
     }

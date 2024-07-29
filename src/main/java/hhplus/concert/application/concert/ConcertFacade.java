@@ -12,10 +12,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ConcertService {
+public class ConcertFacade {
 
     private final ConcertFinder concertFinder;
-    private final ConcertManager concertManager;
+    private final hhplus.concert.domain.concert.ConcertService concertService;
 
     public List<ConcertScheduleResult> selectConcertSchedule(String token, Long concertId, String status) {
         List<ConcertSchedule> concertSchedules = concertFinder.selectConcertScheduleBy(concertId, status);
@@ -29,7 +29,7 @@ public class ConcertService {
 
     public void reserveSeat(ReservationSeatCommand command) {
         ConcertSchedule concertSchedule = concertFinder.getConcertSchedule(command.concertScheduleId());
-        concertManager.reserveSeat(
+        concertService.reserveSeat(
                 concertSchedule,
                 command.userId(),
                 command.seatId()

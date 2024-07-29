@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 @Transactional
 @RequiredArgsConstructor
-public class PaymentManager {
+public class PaymentService {
 
     private final UserRepository userRepository;
     private final ConcertRepository concertRepository;

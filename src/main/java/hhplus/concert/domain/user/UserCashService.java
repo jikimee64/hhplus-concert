@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class UserCashManager {
+public class UserCashService {
 
     private final UserRepository userRepository;
 

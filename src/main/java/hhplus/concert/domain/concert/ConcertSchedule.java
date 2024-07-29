@@ -55,6 +55,12 @@ public class ConcertSchedule {
         this(concert, openDate, startAt, endAt, totalSeat, TotalSeatStatus.AVAILABLE);
     }
 
+    public void isTotalSeatSoldOut(){
+        if(this.status == TotalSeatStatus.SOLD_OUT){
+            throw new ApiException(ErrorCode.E007, LogLevel.INFO);
+        }
+    }
+
     public void updateTotalSeatStatusSoldOut(){
         this.status = TotalSeatStatus.SOLD_OUT;
     }

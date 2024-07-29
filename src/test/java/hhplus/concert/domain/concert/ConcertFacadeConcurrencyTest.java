@@ -4,9 +4,6 @@ import hhplus.concert.infra.persistence.ConcertJpaRepository;
 import hhplus.concert.infra.persistence.ConcertScheduleJpaRepository;
 import hhplus.concert.infra.persistence.ConcertSeatJpaRepository;
 import hhplus.concert.infra.persistence.ReservationJpaRepository;
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.EntityManager;
-import org.checkerframework.dataflow.qual.AssertMethod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +22,10 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class ConcertManagerConcurrencyTest {
+public class ConcertFacadeConcurrencyTest {
 
     @Autowired
-    private ConcertManager concertManager;
+    private ConcertService concertService;
 
     @Autowired
     private ConcertJpaRepository concertJpaRepository;
@@ -72,7 +69,7 @@ public class ConcertManagerConcurrencyTest {
             service.execute(() -> {
                 try{
                     // when
-                    concertManager.reserveSeatWithLock(concertSchedule, userId, concertSeat.getId());
+                    concertService.reserveSeatWithLock(concertSchedule, userId, concertSeat.getId());
                 }catch (Exception e) {
                     System.out.println(e.getMessage());
                 } finally {

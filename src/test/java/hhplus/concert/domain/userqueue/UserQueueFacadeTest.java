@@ -9,7 +9,6 @@ import hhplus.concert.support.holder.TimeHolder;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class UserQueueManagerTest extends IntegrationTest {
+class UserQueueFacadeTest extends IntegrationTest {
 
     @Autowired
     private UserQueueRepository userQueueRepository;
@@ -40,12 +39,12 @@ class UserQueueManagerTest extends IntegrationTest {
         // given
         String testQueueToken = "testQueueToken";
         UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(testQueueToken);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
+        UserQueueService userQueueService = new UserQueueService(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
         Long userId = 1L;
         Long concertScheduleId = 1L;
 
         // when
-        String queueToken = userQueueManager.enterUserQueue(concertScheduleId, userId);
+        String queueToken = userQueueService.enterUserQueue(concertScheduleId, userId);
 
         // then
         List<UserQueue> userQueues = userQueueRepository.findAll();
@@ -61,13 +60,13 @@ class UserQueueManagerTest extends IntegrationTest {
         String existQueueToken = "existQueueToken";
         String testQueueToken = "existTestQueueToken";
         UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(testQueueToken);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
+        UserQueueService userQueueService = new UserQueueService(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
         Long userId = 1L;
         Long concertScheduleId = 1L;
         userQueueJpaRepository.save(new UserQueue(userId, concertScheduleId, existQueueToken));
 
         // when
-        String queueToken = userQueueManager.enterUserQueue(concertScheduleId, userId);
+        String queueToken = userQueueService.enterUserQueue(concertScheduleId, userId);
 
         // then
         List<UserQueue> userQueues = userQueueRepository.findAll();
@@ -89,10 +88,10 @@ class UserQueueManagerTest extends IntegrationTest {
 
         TimeHolder testTimeHolder = new TestTimeHolder(dateTime);
         UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(userId, userWaitingNumber);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, testTimeHolder, userQueueConstant);
+        UserQueueService userQueueService = new UserQueueService(userQueueRepository, userQueueTokenProvider, testTimeHolder, userQueueConstant);
 
         // when
-        Integer waitingNumber = userQueueManager.selectWaitingNumber("", concertScheduleId);
+        Integer waitingNumber = userQueueService.selectWaitingNumber("", concertScheduleId);
 
         entityManager.clear(); // 디비에 업데이트 된 값을 가져오기 위해 영속성 컨텍스트 초기화
 
@@ -125,7 +124,7 @@ class UserQueueManagerTest extends IntegrationTest {
         Long userId = 1L;
         Long userQueuePk = 10L;
         UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(userId, userQueuePk);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
+        UserQueueService userQueueService = new UserQueueService(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
         Long concertScheduleId = 1L;
         String token = "token";
         userQueueJpaRepository.save(
@@ -133,7 +132,7 @@ class UserQueueManagerTest extends IntegrationTest {
         );
 
         // when
-        Integer waitingNumber = userQueueManager.selectWaitingNumber(token, concertScheduleId);
+        Integer waitingNumber = userQueueService.selectWaitingNumber(token, concertScheduleId);
 
         // then
         assertThat(waitingNumber).isEqualTo(3L);
@@ -146,10 +145,10 @@ class UserQueueManagerTest extends IntegrationTest {
         Long concertScheduleId = 1L;
         userQueueJpaRepository.save(new UserQueue(userId, concertScheduleId, "", UserQueueStatus.EXPIRED));
         UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(userId, 1L);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
+        UserQueueService userQueueService = new UserQueueService(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
 
         // when & then
-        assertThatThrownBy(() -> userQueueManager.validateTopExpiredBy(""))
+        assertThatThrownBy(() -> userQueueService.validateTopExpiredBy(""))
                 .isInstanceOf(ApiException.class)
                 .hasMessage("대기열 상태가 활성상태가 아닙니다.");
     }
@@ -182,10 +181,10 @@ class UserQueueManagerTest extends IntegrationTest {
 
         Long userId = 1L;
         UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(userId, 1L);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
+        UserQueueService userQueueService = new UserQueueService(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
 
         // when
-        Integer updatedCount = userQueueManager.updateExpireConditionToken();
+        Integer updatedCount = userQueueService.updateExpireConditionToken();
 
         // then
         assertThat(updatedCount).isEqualTo(1);
@@ -196,7 +195,7 @@ class UserQueueManagerTest extends IntegrationTest {
         // given
         Long userId = 1L;
         UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(userId, 1L);
-        UserQueueManager userQueueManager = new UserQueueManager(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
+        UserQueueService userQueueService = new UserQueueService(userQueueRepository, userQueueTokenProvider, timeHolder, userQueueConstant);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime enteredAt = LocalDateTime.parse("2024-01-01 00:00:00", formatter);
@@ -226,7 +225,7 @@ class UserQueueManagerTest extends IntegrationTest {
         );
 
         // when
-        userQueueManager.periodicallyEnterUserQueue();
+        userQueueService.periodicallyEnterUserQueue();
 
         // then
         List<UserQueue> progress = userQueueJpaRepository.findAllByStatus(UserQueueStatus.PROGRESS);

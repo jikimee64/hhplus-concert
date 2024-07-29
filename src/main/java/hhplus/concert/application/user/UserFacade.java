@@ -1,20 +1,20 @@
 package hhplus.concert.application.user;
 
-import hhplus.concert.domain.user.UserCashManager;
+import hhplus.concert.domain.user.UserCashService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserService {
+public class UserFacade {
 
-    private final UserCashManager userCashManager;
+    private final UserCashService userCashService;
 
     public void chargeAmount(Long userId, Integer amount) {
-        userCashManager.chargeAmount(userId, amount);
+        userCashService.chargeAmount(userId, amount);
     }
 
     public Integer selectAmount(Long userId) {
-        return userCashManager.selectAmount(userId);
+        return userCashService.selectAmount(userId);
     }
 }

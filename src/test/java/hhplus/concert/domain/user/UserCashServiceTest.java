@@ -12,13 +12,13 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class UserCashManagerTest {
+public class UserCashServiceTest {
 
     @Autowired
     private UserJpaRepository userJpaRepository;
 
     @Autowired
-    private UserCashManager userCashManager;
+    private UserCashService userCashService;
 
     @Autowired
     private EntityManager entityManager;
@@ -34,8 +34,8 @@ public class UserCashManagerTest {
         User savedUser = userJpaRepository.save(new User("loginId"));
 
         // when
-        userCashManager.chargeAmount(savedUser.getId(), 1000);
-        userCashManager.chargeAmount(savedUser.getId(), 2000);
+        userCashService.chargeAmount(savedUser.getId(), 1000);
+        userCashService.chargeAmount(savedUser.getId(), 2000);
 
         entityManager.clear();
         User selectedUser = userJpaRepository.findById(savedUser.getId()).get();
@@ -50,11 +50,11 @@ public class UserCashManagerTest {
         User savedUser = userJpaRepository.save(new User("loginId"));
 
         // when
-        userCashManager.chargeAmount(savedUser.getId(), 1000);
-        userCashManager.chargeAmount(savedUser.getId(), 2000);
+        userCashService.chargeAmount(savedUser.getId(), 1000);
+        userCashService.chargeAmount(savedUser.getId(), 2000);
 
         // then
-        assertThat(userCashManager.selectAmount(savedUser.getId())).isEqualTo(3000);
+        assertThat(userCashService.selectAmount(savedUser.getId())).isEqualTo(3000);
     }
 
 }

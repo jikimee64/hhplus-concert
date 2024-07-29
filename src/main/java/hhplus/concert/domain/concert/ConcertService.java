@@ -10,13 +10,12 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Component
 @Transactional
 @RequiredArgsConstructor
-public class ConcertManager {
+public class ConcertService {
 
     private final ConcertRepository concertRepository;
 
@@ -27,11 +26,10 @@ public class ConcertManager {
             backoff = @Backoff(delay = 100)
     )
     public Reservation reserveSeat(ConcertSchedule concertSchedule, Long userId, Long seatId) {
+        concertSchedule.isTotalSeatSoldOut();
         Long concertScheduleId = concertSchedule.getId();
-        Optional<Reservation> reservation = concertRepository.findReservation(concertScheduleId, seatId);
-        if (reservation.isPresent()) {
-            throw new ApiException(ErrorCode.E002, LogLevel.INFO, "concertScheduleId = " + concertScheduleId + ", seatId = " + seatId);
-        }
+        Optional<Reservation> optionalReservation = concertRepository.findReservation(concertScheduleId, seatId);
+        optionalReservation.ifPresent(reservation -> reservation.validateNotAlreadyReserved(concertScheduleId, seatId));
         ConcertSeat concertSeat = concertRepository.findSeat(seatId);
         return saveReservation(concertSchedule, concertSeat, userId);
     }

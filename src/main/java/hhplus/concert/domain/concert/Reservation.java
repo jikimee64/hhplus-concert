@@ -1,5 +1,7 @@
 package hhplus.concert.domain.concert;
 
+import hhplus.concert.interfaces.api.support.ApiException;
+import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.springframework.boot.logging.LogLevel;
 
 @Entity
 @Builder
@@ -65,6 +68,12 @@ public class Reservation {
         this.seatId = seatId;
         this.status = status;
         this.reservedAt = reservedAt;
+    }
+
+    public void validateNotAlreadyReserved(Long concertScheduleId, Long seatId) {
+        if (isReserved() || isTempReserved()) {
+            throw new ApiException(ErrorCode.E002, LogLevel.INFO, "concertScheduleId = " + concertScheduleId + ", seatId = " + seatId);
+        }
     }
 
     public boolean isUserAmountSufficient(Integer userAmount) {

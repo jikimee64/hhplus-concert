@@ -1,9 +1,9 @@
 package hhplus.concert.interfaces.api.v1.concert;
 
-import hhplus.concert.application.concert.ConcertService;
-import hhplus.concert.application.pay.PaymentService;
+import hhplus.concert.application.concert.ConcertFacade;
+import hhplus.concert.application.pay.PaymentFacade;
 import hhplus.concert.application.pay.dto.ReceiptResult;
-import hhplus.concert.application.userqueue.UserQueueService;
+import hhplus.concert.application.userqueue.UserQueueFacade;
 import hhplus.concert.application.concert.dto.ConcertScheduleResult;
 import hhplus.concert.application.pay.dto.PayCommand;
 import hhplus.concert.application.concert.dto.ReservationSeatCommand;
@@ -27,9 +27,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConcertController {
 
-    private final ConcertService concertService;
-    private final UserQueueService userQueueService;
-    private final PaymentService paymentService;
+    private final ConcertFacade concertFacade;
+    private final UserQueueFacade userQueueFacade;
+    private final PaymentFacade paymentFacade;
 
     @Operation(summary = "유저 대기열 토큰 발급", description = "유저가 대기열 진입시 토큰을 발급한다.")
     @PostMapping("/{concertScheduleId}/queue-token")
@@ -38,7 +38,7 @@ public class ConcertController {
             @PathVariable("concertScheduleId") Long concertScheduleId,
             @RequestBody CreateQueueTokenRequest request
     ) {
-        String queueToken = userQueueService.selectToken(concertScheduleId, request.userId());
+        String queueToken = userQueueFacade.selectToken(concertScheduleId, request.userId());
         return ApiResponse.success(new CreateQueueTokenResponse(
                 queueToken
         ));
@@ -52,7 +52,7 @@ public class ConcertController {
             @Parameter(description = "콘서트 스케줄 고유값")
             @PathVariable("concertScheduleId") Long concertScheduleId
     ) {
-        Integer waitingNumber = userQueueService.selectWaitingNumber(queueToken, concertScheduleId);
+        Integer waitingNumber = userQueueFacade.selectWaitingNumber(queueToken, concertScheduleId);
         return ApiResponse.success(new SelectQueueResponse(
                 waitingNumber
         ));
@@ -68,7 +68,7 @@ public class ConcertController {
             @Parameter(description = "예약 가능 상태")
             @RequestParam(value = "status", defaultValue = "ACTIVE") String status
     ) {
-        List<ConcertScheduleResult> concertScheduleResults = concertService.selectConcertSchedule(queueToken, concertId, status);
+        List<ConcertScheduleResult> concertScheduleResults = concertFacade.selectConcertSchedule(queueToken, concertId, status);
         return ApiResponse.success(concertScheduleResults);
     }
 
@@ -78,7 +78,7 @@ public class ConcertController {
             @Parameter(description = "콘서트 스케줄 고유값")
             @PathVariable("concertScheduleId") Long concertScheduleId
     ) {
-        List<SeatResult> seatResults = concertService.selectSeat(concertScheduleId);
+        List<SeatResult> seatResults = concertFacade.selectSeat(concertScheduleId);
         return ApiResponse.success(seatResults);
     }
 
@@ -89,7 +89,7 @@ public class ConcertController {
             @PathVariable("concertScheduleId") Long concertScheduleId,
             @RequestBody ReserveSeatRequest request
     ) {
-        concertService.reserveSeat(
+        concertFacade.reserveSeat(
                 new ReservationSeatCommand(
                         concertScheduleId,
                         request.userId(),
@@ -111,7 +111,7 @@ public class ConcertController {
             @PathVariable("seatId") Long seatId,
             @RequestBody PurchaseSeatRequest request
     ) {
-        ReceiptResult receiptResult = paymentService.pay(
+        ReceiptResult receiptResult = paymentFacade.pay(
                 queueToken,
                 new PayCommand(
                         request.userId(),

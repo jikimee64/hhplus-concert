@@ -1,6 +1,6 @@
 package hhplus.concert.interfaces.scheduler;
 
-import hhplus.concert.domain.userqueue.UserQueueManager;
+import hhplus.concert.domain.userqueue.UserQueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserQueueScheduler {
 
-    private final UserQueueManager userQueueManager;
+    private final UserQueueService userQueueService;
 
     @Scheduled(fixedDelay = 5000, initialDelay = 1800_000)
     public void checkTokenExpire() {
-        userQueueManager.updateExpireConditionToken();
+        userQueueService.updateExpireConditionToken();
     }
 
     @Scheduled(fixedDelay = 5000)
     public void enteringUserQueue() {
-        userQueueManager.periodicallyEnterUserQueue();
+        userQueueService.periodicallyEnterUserQueue();
     }
 }

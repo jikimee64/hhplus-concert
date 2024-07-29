@@ -1,6 +1,6 @@
 package hhplus.concert.interfaces.api.v1.user;
 
-import hhplus.concert.application.user.UserService;
+import hhplus.concert.application.user.UserFacade;
 import hhplus.concert.interfaces.api.support.ApiResponse;
 import hhplus.concert.interfaces.api.v1.user.reqeust.ChargeCashRequest;
 import hhplus.concert.interfaces.api.v1.user.response.SelectCashResponse;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserFacade userFacade;
 
     @Operation(summary = "유저 잔액 충전", description = "유저 잔액을 충전한다.")
     @PostMapping("/{userId}/amount/charge")
@@ -25,7 +25,7 @@ public class UserController {
             @PathVariable("userId") Long userId,
             @RequestBody ChargeCashRequest request
     ) {
-        userService.chargeAmount(userId, request.amount());
+        userFacade.chargeAmount(userId, request.amount());
         return ApiResponse.success();
     }
 
@@ -35,7 +35,7 @@ public class UserController {
             @Parameter(description = "유저 고유값")
             @PathVariable("userId") Long userId
     ) {
-        Integer userAmount = userService.selectAmount(userId);
+        Integer userAmount = userFacade.selectAmount(userId);
         return ApiResponse.success(new SelectCashResponse(
                 userAmount
         ));

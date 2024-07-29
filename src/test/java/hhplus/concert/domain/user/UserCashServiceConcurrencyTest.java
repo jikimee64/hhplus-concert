@@ -15,10 +15,10 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class UserCashManagerConcurrencyTest {
+public class UserCashServiceConcurrencyTest {
 
     @Autowired
-    private UserCashManager userCashManager;
+    private UserCashService userCashService;
 
     @Autowired
     private UserJpaRepository userJpaRepository;
@@ -31,20 +31,20 @@ public class UserCashManagerConcurrencyTest {
         // when
         CompletableFuture.allOf(
                 CompletableFuture.runAsync(() -> {
-                    userCashManager.chargeAmount(savedUser.getId(), 1000);
+                    userCashService.chargeAmount(savedUser.getId(), 1000);
                 }),
                 CompletableFuture.runAsync(() -> {
-                    userCashManager.chargeAmount(savedUser.getId(), 2000);
+                    userCashService.chargeAmount(savedUser.getId(), 2000);
                 }),
                 CompletableFuture.runAsync(() -> {
-                    userCashManager.chargeAmount(savedUser.getId(), 3000);
+                    userCashService.chargeAmount(savedUser.getId(), 3000);
                 })
         ).join();
 
         Thread.sleep(100L);
 
         // then
-        Integer amount = userCashManager.selectAmount(savedUser.getId());
+        Integer amount = userCashService.selectAmount(savedUser.getId());
         assertThat(amount).isEqualTo(10000 + 1000 + 2000 + 3000);
     }
 
@@ -62,7 +62,7 @@ public class UserCashManagerConcurrencyTest {
             service.execute(() -> {
                 try {
                     // when
-                    userCashManager.chargeAmount(savedUser.getId(), 1000);
+                    userCashService.chargeAmount(savedUser.getId(), 1000);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 } finally {
@@ -73,7 +73,7 @@ public class UserCashManagerConcurrencyTest {
         latch.await();
 
         // then
-        Integer amount = userCashManager.selectAmount(savedUser.getId());
+        Integer amount = userCashService.selectAmount(savedUser.getId());
         assertThat(amount).isEqualTo(10000 + (1000 * numberOfThreads));
     }
 
@@ -91,7 +91,7 @@ public class UserCashManagerConcurrencyTest {
             service.execute(() -> {
                 try {
                     // when
-                    userCashManager.chargeAmountWithLock(savedUser.getId(), 1000);
+                    userCashService.chargeAmountWithLock(savedUser.getId(), 1000);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 } finally {
@@ -102,7 +102,7 @@ public class UserCashManagerConcurrencyTest {
         latch.await();
 
         // then
-        Integer amount = userCashManager.selectAmount(savedUser.getId());
+        Integer amount = userCashService.selectAmount(savedUser.getId());
         assertThat(amount).isEqualTo(10000 + (1000 * numberOfThreads));
     }
 

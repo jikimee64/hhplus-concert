@@ -1,6 +1,6 @@
 package hhplus.concert.interfaces.api.interceptor;
 
-import hhplus.concert.domain.userqueue.UserQueueManager;
+import hhplus.concert.domain.userqueue.UserQueueService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +15,12 @@ public class UserQueueInterceptor implements HandlerInterceptor {
 
     private static final String QUEUE_TOKEN = "queueToken";
 
-    private final UserQueueManager userQueueManager;
+    private final UserQueueService userQueueService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String token = request.getHeader(QUEUE_TOKEN);
-        userQueueManager.validateTopExpiredBy(token);
+        userQueueService.validateTopExpiredBy(token);
         return true;
     }
 

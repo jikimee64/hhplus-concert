@@ -20,7 +20,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class PaymentManagerTest extends IntegrationTest {
+public class PaymentFacadeTest extends IntegrationTest {
 
     @Autowired
     private UserJpaRepository userJpaRepository;
@@ -38,7 +38,7 @@ public class PaymentManagerTest extends IntegrationTest {
     private ConcertScheduleJpaRepository concertScheduleJpaRepository;
 
     @Autowired
-    private PaymentManager paymentManager;
+    private PaymentService paymentService;
 
     @Autowired
     private EntityManager entityManager;
@@ -59,7 +59,7 @@ public class PaymentManagerTest extends IntegrationTest {
         );
 
         // when & then
-        assertThatThrownBy(() -> paymentManager.pay("", save.getId(), concertScheduleId, seatId, concertOpenDate))
+        assertThatThrownBy(() -> paymentService.pay("", save.getId(), concertScheduleId, seatId, concertOpenDate))
                 .isInstanceOf(ApiException.class)
                 .hasMessage(ErrorCode.E005.getMessage());
     }
@@ -92,7 +92,7 @@ public class PaymentManagerTest extends IntegrationTest {
         );
 
         // when
-        Receipt receipt = paymentManager.pay("token", save.getId(), savedConcertSchedule.getId(), seatId, concertOpenDate);
+        Receipt receipt = paymentService.pay("token", save.getId(), savedConcertSchedule.getId(), seatId, concertOpenDate);
 
         entityManager.flush();
         entityManager.clear();
@@ -139,7 +139,7 @@ public class PaymentManagerTest extends IntegrationTest {
         );
 
         // when
-        paymentManager.pay("token", save.getId(), savedConcertSchedule.getId(), seatId, concertOpenDate);
+        paymentService.pay("token", save.getId(), savedConcertSchedule.getId(), seatId, concertOpenDate);
 
         entityManager.flush();
         entityManager.clear();

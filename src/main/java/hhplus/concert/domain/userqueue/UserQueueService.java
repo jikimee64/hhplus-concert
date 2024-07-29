@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class UserQueueManager {
+public class UserQueueService {
 
     private final UserQueueRepository userQueueRepository;
     private final UserQueueTokenProvider userQueueTokenProvider;
