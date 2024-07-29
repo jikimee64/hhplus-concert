@@ -1,13 +1,13 @@
 package hhplus.concert.interfaces.api.v1.concert;
 
-import hhplus.concert.application.ConcertService;
-import hhplus.concert.application.PaymentService;
-import hhplus.concert.application.UserQueueService;
-import hhplus.concert.application.dto.ConcertScheduleResult;
-import hhplus.concert.application.dto.PayCommand;
-import hhplus.concert.application.dto.ReservationSeatCommand;
-import hhplus.concert.application.dto.SeatResult;
-import hhplus.concert.domain.pay.Receipt;
+import hhplus.concert.application.concert.ConcertService;
+import hhplus.concert.application.pay.PaymentService;
+import hhplus.concert.application.pay.dto.ReceiptResult;
+import hhplus.concert.application.userqueue.UserQueueService;
+import hhplus.concert.application.concert.dto.ConcertScheduleResult;
+import hhplus.concert.application.pay.dto.PayCommand;
+import hhplus.concert.application.concert.dto.ReservationSeatCommand;
+import hhplus.concert.application.concert.dto.SeatResult;
 import hhplus.concert.interfaces.api.support.ApiResponse;
 import hhplus.concert.interfaces.api.v1.concert.request.CreateQueueTokenRequest;
 import hhplus.concert.interfaces.api.v1.concert.request.PurchaseSeatRequest;
@@ -19,8 +19,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "콘서트 API", description = "콘서트 API")
@@ -111,7 +109,7 @@ public class ConcertController {
 
     @Operation(summary = "좌석을 결제한다", description = "좌석을 결제한다")
     @PostMapping("/{concertScheduleId}/purchase/seat/{seatId}")
-    public ApiResponse<Receipt> purchaseSeat(
+    public ApiResponse<ReceiptResult> purchaseSeat(
             @Parameter(description = "대기열 토큰")
             @RequestHeader("Authorization") String queueToken,
             @Parameter(description = "콘서트 스케줄 고유값")
@@ -120,7 +118,7 @@ public class ConcertController {
             @PathVariable("seatId") Long seatId,
             @RequestBody PurchaseSeatRequest request
     ) {
-        Receipt receipt = paymentService.pay(
+        ReceiptResult receiptResult = paymentService.pay(
                 queueToken,
                 new PayCommand(
                         request.userId(),
@@ -129,7 +127,7 @@ public class ConcertController {
                         request.concertOpenDate()
                 )
         );
-        return ApiResponse.success(receipt);
+        return ApiResponse.success(receiptResult);
     }
 
 }

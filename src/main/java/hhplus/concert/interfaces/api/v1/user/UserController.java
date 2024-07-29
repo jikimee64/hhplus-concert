@@ -1,6 +1,6 @@
 package hhplus.concert.interfaces.api.v1.user;
 
-import hhplus.concert.application.UserService;
+import hhplus.concert.application.user.UserService;
 import hhplus.concert.interfaces.api.support.ApiResponse;
 import hhplus.concert.interfaces.api.v1.user.reqeust.ChargeCashRequest;
 import hhplus.concert.interfaces.api.v1.user.response.SelectCashResponse;

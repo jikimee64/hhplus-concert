@@ -1,4 +1,4 @@
-package hhplus.concert.domain.pay;
+package hhplus.concert.domain.pay.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

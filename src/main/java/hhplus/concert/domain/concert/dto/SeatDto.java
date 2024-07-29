@@ -1,4 +1,4 @@
-package hhplus.concert.domain.concert;
+package hhplus.concert.domain.concert.dto;
 
 public record SeatDto(
         Long id,

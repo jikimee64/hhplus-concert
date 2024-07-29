@@ -1,11 +1,14 @@
 package hhplus.concert.domain.concert;
 
-import hhplus.concert.IntegrationTest;
 import hhplus.concert.infra.persistence.ConcertJpaRepository;
 import hhplus.concert.infra.persistence.ConcertScheduleJpaRepository;
+import hhplus.concert.infra.persistence.ConcertSeatJpaRepository;
 import hhplus.concert.infra.persistence.ReservationJpaRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,7 +19,9 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-public class ConcertManagerConcurrencyTest extends IntegrationTest {
+@ActiveProfiles("test")
+@SpringBootTest
+public class ConcertManagerConcurrencyTest {
 
     @Autowired
     private ConcertManager concertManager;
@@ -28,7 +33,18 @@ public class ConcertManagerConcurrencyTest extends IntegrationTest {
     private ConcertScheduleJpaRepository concertScheduleJpaRepository;
 
     @Autowired
+    private ConcertSeatJpaRepository concertSeatJpaRepository;
+
+    @Autowired
     private ReservationJpaRepository reservationJpaRepository;
+
+    @AfterEach
+    void tearDown() {
+        reservationJpaRepository.deleteAllInBatch();
+        concertScheduleJpaRepository.deleteAll();
+        concertSeatJpaRepository.deleteAll();
+        concertJpaRepository.deleteAll();
+    }
 
     @Test
     void 좌석_임시예약_동시성_테스트() throws InterruptedException {
@@ -64,7 +80,7 @@ public class ConcertManagerConcurrencyTest extends IntegrationTest {
         latch.await();
 
         // then
-        List<Reservation> byConcertScheduleId = reservationJpaRepository.findByConcertScheduleId(savedConcertSchedule.getId());
-        assertThat(byConcertScheduleId).hasSize(1);
+        List<Reservation> reservations = reservationJpaRepository.findByConcertScheduleId(savedConcertSchedule.getId());
+        assertThat(reservations).hasSize(1);
     }
 }

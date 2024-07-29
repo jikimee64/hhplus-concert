@@ -64,6 +64,10 @@ public class UserQueue {
         return id;
     }
 
+    public Long getConcertScheduleId() {
+        return concertScheduleId;
+    }
+
     public LocalDateTime getExpiredAt() {
         return expiredAt;
     }

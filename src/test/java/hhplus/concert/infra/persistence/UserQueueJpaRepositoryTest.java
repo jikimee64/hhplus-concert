@@ -13,7 +13,6 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-@Transactional
 class UserQueueJpaRepositoryTest extends IntegrationTest {
 
     @Autowired

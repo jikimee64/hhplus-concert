@@ -18,8 +18,6 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-
-@Transactional
 class SeatAssignReleaseCheckerTest extends IntegrationTest {
 
     @Autowired
@@ -44,25 +42,30 @@ class SeatAssignReleaseCheckerTest extends IntegrationTest {
         LocalDateTime expiredAt = LocalDateTime.of(2024, 1, 1, 0, 4, 59);
         LocalDateTime nonExpiredAt = LocalDateTime.of(2024, 1, 1, 0, 5, 1);
         ConcertSeat concertSeat1 = concertSeatJpaRepository.save(
-                new ConcertSeat(1L, 0, 0)
+                new ConcertSeat(1L, 0, 1)
         );
         reservationJpaRepository.save(
                 new Reservation(1L, concertSeat1.getId(), ReservationStatus.TEMP_RESERVED, nonExpiredAt)
         );
 
+        // 삭제되어야 할 좌석
         ConcertSeat concertSeat2 = concertSeatJpaRepository.save(
-                new ConcertSeat(1L, 0, 0)
+                new ConcertSeat(1L, 0, 2)
         );
+        // 삭제되어야 할 예약
         reservationJpaRepository.save(
                 new Reservation(1L, concertSeat2.getId(), ReservationStatus.TEMP_RESERVED, expiredAt)
         );
 
+        // 삭제되어야 할 좌석
         ConcertSeat concertSeat3 = concertSeatJpaRepository.save(
-                new ConcertSeat(1L, 0, 0)
+                new ConcertSeat(1L, 0, 3)
         );
+        // 삭제되어야 할 예약
         Reservation savedReservation = reservationJpaRepository.save(
                 new Reservation(1L, concertSeat3.getId(), ReservationStatus.TEMP_RESERVED, expiredAt)
         );
+        // 삭제되어야 할 결제
         paymentJpaRepository.save(
                 new Payment(1L, savedReservation.getId(), PaymentStatus.PROGRESS)
         );
@@ -73,9 +76,11 @@ class SeatAssignReleaseCheckerTest extends IntegrationTest {
         // then
         List<Reservation> reservations = reservationJpaRepository.findAll();
         List<ConcertSeat> concertSeats = concertSeatJpaRepository.findAll();
+        List<Payment> payments = paymentJpaRepository.findAll();
         assertAll(
                 () -> assertThat(reservations).hasSize(1),
-                () -> assertThat(concertSeats).hasSize(1)
+                () -> assertThat(concertSeats).hasSize(1),
+                () -> assertThat(payments).hasSize(0)
         );
     }
 

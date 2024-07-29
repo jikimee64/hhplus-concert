@@ -1,5 +1,7 @@
 package hhplus.concert.domain.concert;
 
+import hhplus.concert.domain.concert.dto.SeatQueryDto;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,7 @@ public interface ConcertRepository {
     Reservation saveReservation(Reservation reservation);
     List<Reservation> findReservationReleaseTarget(LocalDateTime expiredAt);
     void deleteReservation(List<Reservation> reservations);
+    void deletePaymentBy(List<Long> reservationIds);
     void deleteSeats(List<Long> seats);
     List<Reservation> findBy(Long concertScheduleId);
 }

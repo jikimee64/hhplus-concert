@@ -1,6 +1,6 @@
-package hhplus.concert.application.dto;
+package hhplus.concert.application.concert.dto;
 
-import hhplus.concert.domain.concert.SeatDto;
+import hhplus.concert.domain.concert.dto.SeatDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

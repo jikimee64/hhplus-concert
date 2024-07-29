@@ -1,6 +1,7 @@
 package hhplus.concert.domain.concert;
 
 import hhplus.concert.IntegrationTest;
+import hhplus.concert.domain.concert.dto.SeatDto;
 import hhplus.concert.infra.persistence.ConcertJpaRepository;
 import hhplus.concert.infra.persistence.ConcertScheduleJpaRepository;
 import hhplus.concert.infra.persistence.ConcertSeatJpaRepository;
@@ -18,7 +19,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Transactional
 class ConcertFinderTest extends IntegrationTest {
 
     @Autowired

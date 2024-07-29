@@ -1,7 +1,10 @@
 package hhplus.concert.domain.concert;
 
+import hhplus.concert.domain.concert.dto.SeatDto;
+import hhplus.concert.domain.concert.dto.SeatQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,6 +12,7 @@ import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ConcertFinder {
 
     private final ConcertRepository concertRepository;

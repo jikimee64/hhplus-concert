@@ -43,8 +43,23 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     }
 
     @Override
+    public List<UserQueue> findAllBy(UserQueueStatus status) {
+        return userQueueJpaRepository.findAllByStatus(status);
+    }
+
+    @Override
+    public List<UserQueue> findAllWaitingBy(Long concertScheduleId, Integer limitSize) {
+        return userQueueJpaRepository.findAllLimitSize(concertScheduleId, UserQueueStatus.WAITING, limitSize);
+    }
+
+    @Override
     public List<UserQueue> findStatusIsWaitingAndAlreadyEnteredBy(Long concertScheduleId, LocalDateTime enteredAt) {
         return userQueueJpaRepository.findOrderByIdDescBy(concertScheduleId, UserQueueStatus.WAITING, enteredAt);
+    }
+
+    @Override
+    public Integer updateStatusByIds(List<Long> userQueueIds, UserQueueStatus status) {
+        return userQueueJpaRepository.updateStatusByIds(status, userQueueIds);
     }
 
     @Override

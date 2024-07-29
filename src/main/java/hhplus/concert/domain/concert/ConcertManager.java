@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Component
+@Transactional
 @RequiredArgsConstructor
 public class ConcertManager {
 
@@ -23,7 +24,7 @@ public class ConcertManager {
      * - 존재하지 않을 경우 좌석 테이블에 좌석번호 데이터 저장
      * - 예약 데이터
      */
-    @Transactional
+
     public Reservation reserveSeat(Long concertScheduleId, LocalDate concertOpenDate, Long userId, Integer seatPosition, Integer seatAmount) {
         ConcertSchedule concertSchedule = concertRepository.findConcertSchedule(concertScheduleId);
         if (isEqualConcertOpenDate(concertOpenDate, concertSchedule.getOpenDate())) {
