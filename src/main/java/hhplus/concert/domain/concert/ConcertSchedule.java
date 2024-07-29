@@ -1,8 +1,11 @@
 package hhplus.concert.domain.concert;
 
+import hhplus.concert.interfaces.api.support.ApiException;
+import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.logging.LogLevel;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +33,9 @@ public class ConcertSchedule {
     @Column(name = "total_seat_status")
     @Enumerated(EnumType.STRING)
     private TotalSeatStatus status;
+
+    @Version
+    private Integer version;
 
     public ConcertSchedule(Long id, Concert concert, LocalDate openDate, LocalDateTime startAt, LocalDateTime endAt, Integer totalSeat, TotalSeatStatus status) {
         this.id = id;

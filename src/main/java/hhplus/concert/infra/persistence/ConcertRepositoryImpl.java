@@ -33,17 +33,18 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
+    public Optional<Reservation> findReservationWithLock(Long concertScheduleId, Long seatId) {
+        return reservationJpaRepository.findReservationWithLock(concertScheduleId, seatId);
+    }
+
+    @Override
     public List<SeatQueryDto> findConcertSeat(Long concertScheduleId) {
         return concertQueryRepository.findConcertSeat(concertScheduleId);
     }
 
-    @Override
-    public ConcertSeat saveSeat(ConcertSeat concertSeat) {
-        return concertSeatJpaRepository.save(concertSeat);
-    }
-
-    public Optional<ConcertSeat> findSeatBy(Long concertScheduleId, Integer position) {
-        return concertSeatJpaRepository.findByConcertScheduleIdAndPosition(concertScheduleId, position);
+    public ConcertSeat findSeat(Long seatId) {
+        return concertSeatJpaRepository.findById(seatId)
+                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "ConcertSeat not found seatId = " + seatId));
     }
 
     @Override

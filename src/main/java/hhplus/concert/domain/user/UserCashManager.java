@@ -16,11 +16,17 @@ public class UserCashManager {
     @Transactional
     @Retryable(
             retryFor = {ObjectOptimisticLockingFailureException.class},
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 200)
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 100)
     )
     public void chargeAmount(Long userId, Integer amount) {
         User user = userRepository.findById(userId);
+        user.addAmount(amount);
+    }
+
+    @Transactional
+    public void chargeAmountWithLock(Long userId, Integer amount) {
+        User user = userRepository.findByIdWithLock(userId);
         user.addAmount(amount);
     }
 

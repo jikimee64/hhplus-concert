@@ -19,4 +19,10 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "User not found userId = " + userId));
     }
+
+    @Override
+    public User findByIdWithLock(Long userId) {
+        return userJpaRepository.findByIdWithLock(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "User not found userId = " + userId));
+    }
 }

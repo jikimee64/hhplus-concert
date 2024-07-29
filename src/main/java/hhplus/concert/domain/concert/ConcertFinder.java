@@ -34,6 +34,10 @@ public class ConcertFinder {
         return generateSeatDtos(totalSeat, seatQueryMap);
     }
 
+    public ConcertSchedule getConcertSchedule(Long concertScheduleId) {
+        return concertRepository.findConcertSchedule(concertScheduleId);
+    }
+
     /**
      * @return key: position, value: ConcertSeatQueryDto
      */

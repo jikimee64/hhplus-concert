@@ -22,18 +22,17 @@ public class ConcertService {
         return ConcertScheduleResult.from(concertSchedules);
     }
 
-    public List<SeatResult> selectSeat(String token, Long concertScheduleId) {
+    public List<SeatResult> selectSeat(Long concertScheduleId) {
         List<SeatDto> seatDtos = concertFinder.selectSeatBy(concertScheduleId);
         return SeatResult.from(seatDtos);
     }
 
-    public void reserveSeat(String token, ReservationSeatCommand command) {
+    public void reserveSeat(ReservationSeatCommand command) {
+        ConcertSchedule concertSchedule = concertFinder.getConcertSchedule(command.concertScheduleId());
         concertManager.reserveSeat(
-                command.concertScheduleId(),
-                command.concertOpenDate(),
+                concertSchedule,
                 command.userId(),
-                command.seatPosition(),
-                command.seatAmount()
+                command.seatId()
         );
     }
 }
