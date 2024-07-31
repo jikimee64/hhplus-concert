@@ -61,14 +61,12 @@ public class ConcertController {
     @Operation(summary = "예약 가능 날짜 조회", description = "예약 가능 날짜를 조회한다")
     @GetMapping("/{concertId}/reservation/date")
     public ApiResponse<List<ConcertScheduleResult>> selectReservationDate(
-            @Parameter(description = "대기열 토큰")
-            @RequestHeader("Authorization") String queueToken,
             @Parameter(description = "콘서트 스케줄 고유값")
             @PathVariable("concertId") Long concertId,
             @Parameter(description = "예약 가능 상태")
-            @RequestParam(value = "status", defaultValue = "ACTIVE") String status
+            @RequestParam(value = "status", defaultValue = "AVAILABLE") String status
     ) {
-        List<ConcertScheduleResult> concertScheduleResults = concertFacade.selectConcertSchedule(queueToken, concertId, status);
+        List<ConcertScheduleResult> concertScheduleResults = concertFacade.selectConcertSchedule(concertId, status);
         return ApiResponse.success(concertScheduleResults);
     }
 
