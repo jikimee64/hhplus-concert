@@ -5,6 +5,7 @@ import hhplus.concert.domain.concert.dto.SeatQueryDto;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ConcertRepositoryImpl implements ConcertRepository {
@@ -20,11 +22,24 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     private final PaymentJpaRepository paymentJpaRepository;
     private final ConcertScheduleJpaRepository concertScheduleJpaRepository;
     private final ConcertSeatJpaRepository concertSeatJpaRepository;
+    private final ConcertScheduleRedisRepository concertScheduleRedisRepository;
     private final ConcertQueryRepository concertQueryRepository;
 
     @Override
     public List<ConcertSchedule> findConcertScheduleBy(Long concertId, TotalSeatStatus status) {
-        return concertScheduleJpaRepository.findByConcertIdAndStatus(concertId, status);
+        List<ConcertSchedule> cachedConcertSchedules = concertScheduleRedisRepository.getConcertSchedules(concertId);
+        if (cachedConcertSchedules == null) {
+            List<ConcertSchedule> concertSchedules = concertScheduleJpaRepository.findByConcertIdAndStatus(concertId, status);
+            concertScheduleRedisRepository.saveConcertSchedules(concertId, concertSchedules);
+            return concertSchedules;
+        } else {
+            return cachedConcertSchedules;
+        }
+    }
+
+    @Override
+    public List<ConcertSchedule> findConcertSchedules(List<Long> concertScheduleIds) {
+        return concertScheduleJpaRepository.findAllByIdIn(concertScheduleIds);
     }
 
     @Override
@@ -44,13 +59,13 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
     public ConcertSeat findSeat(Long seatId) {
         return concertSeatJpaRepository.findById(seatId)
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "ConcertSeat not found seatId = " + seatId));
+            .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "ConcertSeat not found seatId = " + seatId));
     }
 
     @Override
     public ConcertSchedule findConcertSchedule(Long concertScheduleId) {
         return concertScheduleJpaRepository.findById(concertScheduleId)
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "ConcertSchedule not found concertScheduleId = " + concertScheduleId));
+            .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "ConcertSchedule not found concertScheduleId = " + concertScheduleId));
     }
 
     @Override
@@ -66,6 +81,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     @Override
     public List<Reservation> findReservationReleaseTarget(LocalDateTime expiredAt) {
         return concertQueryRepository.findReservationReleaseTarget(expiredAt);
+    }
+
+    @Override
+    public List<Reservation> findReservations(List<Long> concertScheduleIds) {
+        return reservationJpaRepository.findByConcertScheduleIn(concertScheduleIds);
     }
 
     @Override
@@ -86,6 +106,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     @Override
     public List<Reservation> findBy(Long concertScheduleId) {
         return reservationJpaRepository.findByConcertScheduleId(concertScheduleId);
+    }
+
+    @Override
+    public void evictCachedConcertSchedule(Long concertId) {
+        concertScheduleRedisRepository.deleteAllConcertSchedules(concertId);
     }
 
 }

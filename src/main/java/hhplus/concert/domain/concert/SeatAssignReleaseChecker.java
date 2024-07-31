@@ -42,7 +42,7 @@ public class SeatAssignReleaseChecker {
                 .count();
             if (reserved == concertSchedule.getTotalSeat()) {
                 concertSchedule.updateTotalSeatStatusAvailable();
-                concertRepository.evictCachedConcertSchedule();
+                concertRepository.evictCachedConcertSchedule(concertSchedule.getConcert().getId());
             }
         }
     }
