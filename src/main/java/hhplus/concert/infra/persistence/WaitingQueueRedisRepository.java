@@ -1,5 +1,6 @@
 package hhplus.concert.infra.persistence;
 
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,14 @@ public class WaitingQueueRedisRepository {
             return 0L;
         }
         return rank + 1;
+    }
+
+    public Set<String> range(Long concertScheduleId, long start, long end) {
+        return waitingQueueRedisTemplate.opsForZSet().range(concertScheduleId, start, end);
+    }
+
+    public Long delete(Long concertScheduleId, Set<String> tokens) {
+        return waitingQueueRedisTemplate.opsForZSet().remove(concertScheduleId, tokens.toArray());
     }
 
 }

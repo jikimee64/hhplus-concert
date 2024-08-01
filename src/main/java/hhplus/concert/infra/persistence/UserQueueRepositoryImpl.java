@@ -1,10 +1,7 @@
 package hhplus.concert.infra.persistence;
 
-import hhplus.concert.domain.userqueue.UserQueue;
 import hhplus.concert.domain.userqueue.UserQueueRepository;
-import hhplus.concert.domain.userqueue.UserQueueStatus;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +9,6 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class UserQueueRepositoryImpl implements UserQueueRepository {
 
-    private final UserQueueJpaRepository userQueueJpaRepository;
     private final WaitingQueueRedisRepository waitingQueueRedisRepository;
     private final ActiveQueueRedisRepository activeQueueRedisRepository;
 
@@ -37,32 +33,18 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     }
 
     @Override
-    public List<UserQueue> findAllBy(UserQueueStatus status) {
-        return userQueueJpaRepository.findAllByStatus(status);
+    public Set<String> getWaitingTokenRange(Long concertScheduleId, Long start, Long end) {
+        return waitingQueueRedisRepository.range(concertScheduleId, start, end);
     }
 
     @Override
-    public List<UserQueue> findAllWaitingBy(Long concertScheduleId, Integer limitSize) {
-        return userQueueJpaRepository.findAllLimitSize(concertScheduleId, UserQueueStatus.WAITING, limitSize);
+    public void deleteWaitingToken(Long concertScheduleId, Set<String> tokens) {
+        waitingQueueRedisRepository.delete(concertScheduleId, tokens);
     }
 
     @Override
-    public Integer updateStatusByIds(List<Long> userQueueIds, UserQueueStatus status) {
-        return userQueueJpaRepository.updateStatusByIds(status, userQueueIds);
-    }
-
-    @Override
-    public Integer updateExpireConditionToken() {
-        return userQueueJpaRepository.updateStatusExpire(
-                UserQueueStatus.EXPIRED,
-                UserQueueStatus.PROGRESS,
-                LocalDateTime.now()
-        );
-    }
-
-    @Override
-    public List<UserQueue> findAll() {
-        return userQueueJpaRepository.findAll();
+    public void addActiveToken(String token, Long concertScheduleId) {
+        activeQueueRedisRepository.add(token, concertScheduleId);
     }
 
 }

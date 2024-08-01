@@ -24,7 +24,8 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, Lon
 
     List<Reservation> findByConcertScheduleId(Long concertScheduleId);
 
-    List<Reservation> findByConcertScheduleIn(List<Long> concertScheduleIds);
+    @Query("select r from Reservation r where r.concertScheduleId in :concertScheduleIds")
+    List<Reservation> findAllByConcertScheduleIn(@Param("concertScheduleIds") List<Long> concertScheduleIds);
 
     @Modifying
     @Query("""

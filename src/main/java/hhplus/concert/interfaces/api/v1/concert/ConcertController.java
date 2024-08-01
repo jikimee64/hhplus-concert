@@ -52,7 +52,7 @@ public class ConcertController {
             @Parameter(description = "콘서트 스케줄 고유값")
             @PathVariable("concertScheduleId") Long concertScheduleId
     ) {
-        Integer waitingNumber = userQueueFacade.selectWaitingNumber(queueToken, concertScheduleId);
+        Long waitingNumber = userQueueFacade.selectWaitingNumber(queueToken, concertScheduleId);
         return ApiResponse.success(new SelectQueueResponse(
                 waitingNumber
         ));

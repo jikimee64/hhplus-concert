@@ -1,15 +1,13 @@
 package hhplus.concert.domain.userqueue;
 
-import java.util.List;
+import java.util.Set;
 
 public interface UserQueueRepository {
     void save(Long userId, Long concertScheduleId, String token);
     Boolean isActiveToken(String token);
     void deleteActiveToken(String token);
     Long waitingNumber(Long concertScheduleId, String token);
-    List<UserQueue> findAllBy(UserQueueStatus status);
-    List<UserQueue> findAllWaitingBy(Long concertScheduleId, Integer limitSize);
-    Integer updateStatusByIds(List<Long> userQueueIds, UserQueueStatus status);
-    Integer updateExpireConditionToken();
-    List<UserQueue> findAll();
+    Set<String> getWaitingTokenRange(Long concertScheduleId, Long start, Long end);
+    void deleteWaitingToken(Long concertScheduleId, Set<String> tokens);
+    void addActiveToken(String token, Long concertScheduleId);
 }

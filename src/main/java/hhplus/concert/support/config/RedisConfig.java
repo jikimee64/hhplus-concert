@@ -66,14 +66,11 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> activeQueueRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<String, Long> activeQueueRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Long> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
+        template.setValueSerializer(new LongToStringRedisSerializer());
         return template;
     }
 

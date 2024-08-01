@@ -1,7 +1,10 @@
 package hhplus.concert.domain.userqueue;
 
+import hhplus.concert.domain.concert.ConcertRepository;
+import hhplus.concert.domain.concert.ConcertSchedule;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
@@ -15,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserQueueService {
 
+    private final ConcertRepository concertRepository;
     private final UserQueueRepository userQueueRepository;
     private final UserQueueTokenProvider userQueueTokenProvider;
     private final UserQueueConstant userQueueConstant;
@@ -45,30 +49,18 @@ public class UserQueueService {
     }
 
     /**
-     * 토큰 만료 여부 조건일 경우 토큰 상태값을 업데이트 한다.
-     */
-    @Transactional
-    public Integer updateExpireConditionToken() {
-        return userQueueRepository.updateExpireConditionToken();
-    }
-
-    /**
      * 콘서트 스케줄 마다 대기열 제한인원에 허용하는 만큼 대기중인 유저를 진입시킨다
      */
     @Transactional
     public void periodicallyEnterUserQueue() {
-        Map<Long, List<UserQueue>> groupingUserQueue = userQueueRepository.findAllBy(UserQueueStatus.PROGRESS).stream()
-                .collect(Collectors.groupingBy(UserQueue::getConcertScheduleId, Collectors.toList()));
+        List<ConcertSchedule> concertSchedules = concertRepository.findConcertSchedules();
 
-        groupingUserQueue.forEach(
-                (concertScheduleId, userQueues) -> {
-                    Integer remainEnteringSize = userQueueConstant.getMaxWaitingNumber() - userQueues.size();
-                    if (remainEnteringSize > 0) {
-                        List<UserQueue> waitingUserQueues = userQueueRepository.findAllWaitingBy(concertScheduleId, remainEnteringSize);
-                        userQueueRepository.updateStatusByIds(waitingUserQueues.stream().map(UserQueue::getId).toList(), UserQueueStatus.PROGRESS);
-                    }
-                }
-        );
+        for (ConcertSchedule concertSchedule : concertSchedules) {
+            Long maxWaitingSize = userQueueConstant.getMaxWaitingNumber() - 1;
+            Set<String> waitingTokenRange = userQueueRepository.getWaitingTokenRange(concertSchedule.getId(), 0L, maxWaitingSize);
+            userQueueRepository.deleteWaitingToken(concertSchedule.getId(), waitingTokenRange);
+            waitingTokenRange.forEach(token -> userQueueRepository.addActiveToken(token, concertSchedule.getId()));
+        }
     }
 
 }

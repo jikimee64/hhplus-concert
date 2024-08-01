@@ -13,8 +13,7 @@ public class UserQueueFacade {
         return userQueueService.enterUserQueue(concertScheduleId, userId);
     }
     
-    public Integer selectWaitingNumber(String token, Long concertScheduleId) {
+    public Long selectWaitingNumber(String token, Long concertScheduleId) {
         return userQueueService.selectWaitingNumber(token, concertScheduleId);
-
     }
 }
