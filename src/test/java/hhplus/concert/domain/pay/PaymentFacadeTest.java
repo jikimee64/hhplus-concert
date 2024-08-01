@@ -4,8 +4,6 @@ import hhplus.concert.IntegrationTest;
 import hhplus.concert.domain.concert.*;
 import hhplus.concert.domain.pay.dto.Receipt;
 import hhplus.concert.domain.user.User;
-import hhplus.concert.domain.userqueue.UserQueue;
-import hhplus.concert.domain.userqueue.UserQueueStatus;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.infra.persistence.*;
@@ -29,10 +27,10 @@ public class PaymentFacadeTest extends IntegrationTest {
     private ReservationJpaRepository reservationJpaRepository;
 
     @Autowired
-    private UserQueueJpaRepository userQueueJpaRepository;
+    private ConcertJpaRepository concertJpaRepository;
 
     @Autowired
-    private ConcertJpaRepository concertJpaRepository;
+    private ActiveQueueRedisRepository activeQueueRedisRepository;
 
     @Autowired
     private ConcertScheduleJpaRepository concertScheduleJpaRepository;
@@ -87,12 +85,10 @@ public class PaymentFacadeTest extends IntegrationTest {
                         .seatAmount(999)
                         .build()
         );
-        UserQueue savedUserQueue = userQueueJpaRepository.save(
-                new UserQueue(1L, 1L, token, UserQueueStatus.PROGRESS)
-        );
-
         // when
         Receipt receipt = paymentService.pay("token", save.getId(), savedConcertSchedule.getId(), seatId, concertOpenDate);
+
+        boolean exists = activeQueueRedisRepository.exists(token);
 
         entityManager.flush();
         entityManager.clear();
@@ -101,7 +97,7 @@ public class PaymentFacadeTest extends IntegrationTest {
         Reservation reservation = reservationJpaRepository.findById(savedReservation.getId()).get();
         assertAll(
                 () -> assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.RESERVED),
-                () -> assertThat(savedUserQueue.getStatus()).isEqualTo(UserQueueStatus.DONE),
+                () -> assertThat(exists).isFalse(),
                 () -> assertThat(receipt.concertName()).isEqualTo(savedConcert.getTitle()),
                 () -> assertThat(receipt.concertOpenDate()).isEqualTo(concertOpenDate),
                 () -> assertThat(receipt.seatPosition()).isEqualTo(1),
@@ -115,7 +111,6 @@ public class PaymentFacadeTest extends IntegrationTest {
         // given
         User save = userJpaRepository.save(new User("user1", 1000));
         Long seatId = 1L;
-        String token = "token";
         Concert savedConcert = concertJpaRepository.save(new Concert("콘서트명"));
 
         LocalDate concertOpenDate = LocalDate.now();
@@ -133,9 +128,6 @@ public class PaymentFacadeTest extends IntegrationTest {
                         .seatAmount(999)
                         .status(ReservationStatus.RESERVED)
                         .build()
-        );
-        userQueueJpaRepository.save(
-                new UserQueue(1L, 1L, token, UserQueueStatus.PROGRESS)
         );
 
         // when

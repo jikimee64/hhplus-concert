@@ -47,4 +47,9 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
         activeQueueRedisRepository.add(token, concertScheduleId);
     }
 
+    @Override
+    public Boolean existActiveToken(String token) {
+        return activeQueueRedisRepository.exists(token);
+    }
+
 }

@@ -44,10 +44,10 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<Long, String> waitingQueueRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<Long, String> template = new RedisTemplate<>();
+    public RedisTemplate<String, String> waitingQueueRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
-        template.setKeySerializer(new LongToStringRedisSerializer());
+        template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
         return template;
     }

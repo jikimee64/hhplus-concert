@@ -31,13 +31,22 @@ public class UserQueueService {
     }
 
     /**
-     * 대기열 큐에 존재하지 않을 경우 0을 반환
-     * - 활성화된 큐에 추가 되었다는 의미
-     * 대기열 큐에 존재할 경우 해당해는 순서 ㅂ나환
+     * 대기열 큐에 존재하지 않을 경우
+     * - 활성화된 큐에 없을 경우 예외처리
+     * - 활성화된 큐에 있을 경우 0을 반환
+     * 대기열 큐에 존재할 경우 해당해는 순서 반환
      */
     @Transactional
     public Long selectWaitingNumber(String token, Long concertScheduleId) {
-        return userQueueRepository.waitingNumber(concertScheduleId, token) ;
+        Long waitingNumber = userQueueRepository.waitingNumber(concertScheduleId, token);
+        if (waitingNumber == 0) {
+            Boolean existActiveToken = userQueueRepository.existActiveToken(token);
+            if(!existActiveToken){
+                throw new ApiException(ErrorCode.E003, LogLevel.INFO, "token = " + token);
+            }
+            return 0L;
+        }
+        return waitingNumber;
     }
 
     @Transactional(readOnly = true)

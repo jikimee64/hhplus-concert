@@ -10,4 +10,5 @@ public interface UserQueueRepository {
     Set<String> getWaitingTokenRange(Long concertScheduleId, Long start, Long end);
     void deleteWaitingToken(Long concertScheduleId, Set<String> tokens);
     void addActiveToken(String token, Long concertScheduleId);
+    Boolean existActiveToken(String token);
 }
