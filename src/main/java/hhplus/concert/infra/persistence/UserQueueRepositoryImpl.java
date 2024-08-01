@@ -18,12 +18,11 @@ import java.util.Optional;
 public class UserQueueRepositoryImpl implements UserQueueRepository {
 
     private final UserQueueJpaRepository userQueueJpaRepository;
+    private final WaitingQueueRedisRepository waitingQueueRedisRepository;
 
     @Override
-    public UserQueue save(Long userId, Long concertScheduleId, String token) {
-        return userQueueJpaRepository.save(
-                new UserQueue(userId, concertScheduleId, token)
-        );
+    public void save(Long userId, Long concertScheduleId, String token) {
+        waitingQueueRedisRepository.add(concertScheduleId, token);
     }
 
     @Override
@@ -33,13 +32,8 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     }
 
     @Override
-    public Optional<UserQueue> findBy(Long userId, Long concertScheduleId) {
-        return userQueueJpaRepository.findByUserIdAndConcertScheduleId(userId, concertScheduleId);
-    }
-
-    @Override
-    public List<UserQueue> findStatusIsProgressBy(Long concertScheduleId) {
-        return userQueueJpaRepository.findOrderByIdDescBy(concertScheduleId, UserQueueStatus.PROGRESS);
+    public Long waitingNumber(Long concertScheduleId, String token) {
+        return waitingQueueRedisRepository.rank(concertScheduleId, token);
     }
 
     @Override
@@ -53,18 +47,8 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     }
 
     @Override
-    public List<UserQueue> findStatusIsWaitingAndAlreadyEnteredBy(Long concertScheduleId, LocalDateTime enteredAt) {
-        return userQueueJpaRepository.findOrderByIdDescBy(concertScheduleId, UserQueueStatus.WAITING, enteredAt);
-    }
-
-    @Override
     public Integer updateStatusByIds(List<Long> userQueueIds, UserQueueStatus status) {
         return userQueueJpaRepository.updateStatusByIds(status, userQueueIds);
-    }
-
-    @Override
-    public Integer updateStatusAndExpiredAt(UserQueueStatus status, LocalDateTime expiredAt, String token) {
-        return userQueueJpaRepository.updateStatusAndExpiredAt(status, expiredAt, token);
     }
 
     @Override
