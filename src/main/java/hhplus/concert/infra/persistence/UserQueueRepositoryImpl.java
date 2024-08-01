@@ -1,17 +1,12 @@
 package hhplus.concert.infra.persistence;
 
-import hhplus.concert.interfaces.api.support.ApiException;
-import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.domain.userqueue.UserQueue;
 import hhplus.concert.domain.userqueue.UserQueueRepository;
 import hhplus.concert.domain.userqueue.UserQueueStatus;
-import lombok.RequiredArgsConstructor;
-import org.springframework.boot.logging.LogLevel;
-import org.springframework.stereotype.Repository;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,6 +14,7 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
 
     private final UserQueueJpaRepository userQueueJpaRepository;
     private final WaitingQueueRedisRepository waitingQueueRedisRepository;
+    private final ActiveQueueRedisRepository activeQueueRedisRepository;
 
     @Override
     public void save(Long userId, Long concertScheduleId, String token) {
@@ -26,9 +22,13 @@ public class UserQueueRepositoryImpl implements UserQueueRepository {
     }
 
     @Override
-    public UserQueue findByOrElseThrow(String token) {
-        return userQueueJpaRepository.findByToken(token)
-                .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "UserQueue not found. token = " + token));
+    public Boolean isActiveToken(String token) {
+        return activeQueueRedisRepository.exists(token);
+    }
+
+    @Override
+    public void deleteActiveToken(String token) {
+        activeQueueRedisRepository.delete(token);
     }
 
     @Override

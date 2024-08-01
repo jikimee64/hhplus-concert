@@ -22,22 +22,6 @@ public interface UserQueueJpaRepository extends JpaRepository<UserQueue, Long> {
             @Param("status") UserQueueStatus status
     );
 
-    @Query("""
-               SELECT uq FROM UserQueue uq
-               WHERE uq.concertScheduleId =:concertScheduleId AND uq.status =:status
-               AND uq.enteredAt < :enteredAt
-               order by uq.id desc
-            """)
-    List<UserQueue> findOrderByIdDescBy(
-            @Param("concertScheduleId") Long concertScheduleId,
-            @Param("status") UserQueueStatus status,
-            @Param("enteredAt") LocalDateTime enteredAt
-    );
-
-    Optional<UserQueue> findByToken(String token);
-
-    Optional<UserQueue> findByUserIdAndConcertScheduleId(Long userId, Long concertScheduleId);
-
     @Modifying
     @Query("""
                  UPDATE UserQueue uq SET uq.expiredAt =:expiredAt, uq.status = :status

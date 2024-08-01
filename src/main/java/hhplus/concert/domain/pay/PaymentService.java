@@ -7,18 +7,15 @@ import hhplus.concert.domain.concert.ReservationStatus;
 import hhplus.concert.domain.pay.dto.Receipt;
 import hhplus.concert.domain.user.User;
 import hhplus.concert.domain.user.UserRepository;
-import hhplus.concert.domain.userqueue.UserQueue;
 import hhplus.concert.domain.userqueue.UserQueueRepository;
-import hhplus.concert.domain.userqueue.UserQueueStatus;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Component
 @Transactional
@@ -30,14 +27,6 @@ public class PaymentService {
     private final UserQueueRepository userQueueRepository;
     private final PaymentRepository paymentRepository;
 
-    /**
-     * 콘서트 예약 결제를 처리
-     * - 유저의 잔액과 예약한 좌석의 금액을 비교하여 충분한지 확인하고 차감
-     * - 대기열 상태값 DONE으로 변경
-     * - 전체 좌석 마감되었을 경우 전체 좌석 마감 상태 업데이트
-     * - 결제 데이터 삽입
-     * - 영수증 반환
-     */
     public Receipt pay(String token, Long userId, Long concertScheduleId, Long seatId, LocalDate concertOpenDate) {
         User user = userRepository.findById(userId);
 
@@ -45,7 +34,7 @@ public class PaymentService {
                 .orElseThrow(() -> new ApiException(ErrorCode.E404, LogLevel.INFO, "Reservation not found concertScheduleId: " + concertScheduleId + ", seatId: " + seatId));
         checkAndProcessPayment(selectedReservation, user);
 
-        updateUserQueueStatus(token);
+        userQueueRepository.deleteActiveToken(token);
 
         concertRepository.updateReservationStatus(ReservationStatus.RESERVED, concertScheduleId, seatId);
 
@@ -74,14 +63,6 @@ public class PaymentService {
             throw new ApiException(ErrorCode.E005, LogLevel.INFO, "seatAmount = " + reservation.getSeatAmount() + "userAmount = " + user.getAmount());
         }
         user.subtractAmount(reservation.getSeatAmount());
-    }
-
-    /**
-     * 대기열 상태값 DONE으로 변경
-     */
-    private void updateUserQueueStatus(String token) {
-        UserQueue userQueue = userQueueRepository.findByOrElseThrow(token);
-        userQueue.updateStatusDone(UserQueueStatus.DONE);
     }
 
     /**
