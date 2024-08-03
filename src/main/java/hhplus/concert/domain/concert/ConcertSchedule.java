@@ -65,6 +65,10 @@ public class ConcertSchedule {
         this.status = TotalSeatStatus.SOLD_OUT;
     }
 
+    public void updateTotalSeatStatusAvailable(){
+        this.status = TotalSeatStatus.AVAILABLE;
+    }
+
     public Long getId() {
         return id;
     }

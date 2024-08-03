@@ -28,8 +28,8 @@ public class ConcertFinder {
      * - 좌석 정보가 있는 경우, 좌석 상태는 'RESERVED'로 반환한다.
      */
     public List<SeatDto> selectSeatBy(Long concertScheduleId) {
-        Integer totalSeat = concertRepository.findConcertSeat(concertScheduleId).get(0).totalSeat();
         List<SeatQueryDto> seatQueryDtos = concertRepository.findConcertSeat(concertScheduleId);
+        Integer totalSeat = seatQueryDtos.get(0).totalSeat();
         Map<Integer, SeatQueryDto> seatQueryMap = toMap(seatQueryDtos);
         return generateSeatDtos(totalSeat, seatQueryMap);
     }

@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface ConcertScheduleJpaRepository extends JpaRepository<ConcertSchedule, Long> {
     List<ConcertSchedule> findByConcertIdAndStatus(Long concertId, TotalSeatStatus status);
+    List<ConcertSchedule> findAllByIdIn(List<Long> concertScheduleIds);
 }

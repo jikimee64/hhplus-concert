@@ -17,7 +17,7 @@ public class ConcertFacade {
     private final ConcertFinder concertFinder;
     private final hhplus.concert.domain.concert.ConcertService concertService;
 
-    public List<ConcertScheduleResult> selectConcertSchedule(String token, Long concertId, String status) {
+    public List<ConcertScheduleResult> selectConcertSchedule(Long concertId, String status) {
         List<ConcertSchedule> concertSchedules = concertFinder.selectConcertScheduleBy(concertId, status);
         return ConcertScheduleResult.from(concertSchedules);
     }

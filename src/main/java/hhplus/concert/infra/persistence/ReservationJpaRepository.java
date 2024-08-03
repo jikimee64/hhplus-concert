@@ -24,6 +24,8 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, Lon
 
     List<Reservation> findByConcertScheduleId(Long concertScheduleId);
 
+    List<Reservation> findByConcertScheduleIn(List<Long> concertScheduleIds);
+
     @Modifying
     @Query("""
               UPDATE Reservation r SET r.status = :status
@@ -33,6 +35,6 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, Lon
             @Param("status") ReservationStatus status,
             @Param("concertScheduleId") Long concertScheduleId,
             @Param("seatId") Long seatId
-
     );
+
 }
