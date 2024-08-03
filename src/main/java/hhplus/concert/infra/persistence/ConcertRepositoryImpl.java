@@ -26,6 +26,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     private final ConcertQueryRepository concertQueryRepository;
 
     @Override
+    public List<ConcertSchedule> findConcertSchedules() {
+        return concertScheduleJpaRepository.findAll();
+    }
+
+    @Override
     public List<ConcertSchedule> findConcertScheduleBy(Long concertId, TotalSeatStatus status) {
         List<ConcertSchedule> cachedConcertSchedules = concertScheduleRedisRepository.getConcertSchedules(concertId);
         if (cachedConcertSchedules == null) {
@@ -85,7 +90,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
 
     @Override
     public List<Reservation> findReservations(List<Long> concertScheduleIds) {
-        return reservationJpaRepository.findByConcertScheduleIn(concertScheduleIds);
+        return reservationJpaRepository.findAllByConcertScheduleIn(concertScheduleIds);
     }
 
     @Override

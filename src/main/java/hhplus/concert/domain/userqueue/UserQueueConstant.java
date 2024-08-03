@@ -6,10 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @ConfigurationProperties(prefix = "user-queue")
 public class UserQueueConstant {
-    private final Integer maxWaitingNumber;
-    private final Integer queueTokenExpireTime;
+    private final Long maxWaitingNumber;
+    private final Long queueTokenExpireTime;
 
-    public UserQueueConstant(Integer maxWaitingNumber, Integer queueTokenExpireTime) {
+    public UserQueueConstant(Long maxWaitingNumber, Long queueTokenExpireTime) {
         this.maxWaitingNumber = maxWaitingNumber;
         this.queueTokenExpireTime = queueTokenExpireTime;
     }

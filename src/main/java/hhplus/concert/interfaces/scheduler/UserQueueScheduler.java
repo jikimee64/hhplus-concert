@@ -11,12 +11,7 @@ public class UserQueueScheduler {
 
     private final UserQueueService userQueueService;
 
-    @Scheduled(fixedDelay = 5000, initialDelay = 1800_000)
-    public void checkTokenExpire() {
-        userQueueService.updateExpireConditionToken();
-    }
-
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 1000)
     public void enteringUserQueue() {
         userQueueService.periodicallyEnterUserQueue();
     }
