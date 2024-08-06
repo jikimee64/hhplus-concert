@@ -1,15 +1,18 @@
 package hhplus.concert.infra.persistence;
 
 import java.util.Set;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
 public class WaitingQueueRedisRepository {
 
     private final RedisTemplate<String, String> waitingQueueRedisTemplate;
+
+    public WaitingQueueRedisRepository(@Qualifier("waitingQueueRedisTemplate") RedisTemplate<String, String> waitingQueueRedisTemplate) {
+        this.waitingQueueRedisTemplate = waitingQueueRedisTemplate;
+    }
 
     public void add(Long concertScheduleId, String token) {
         long currentTimeMillis = System.currentTimeMillis();
