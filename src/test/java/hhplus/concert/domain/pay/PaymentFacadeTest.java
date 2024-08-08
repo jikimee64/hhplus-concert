@@ -88,8 +88,6 @@ public class PaymentFacadeTest extends IntegrationTest {
         // when
         Receipt receipt = paymentService.pay("token", save.getId(), savedConcertSchedule.getId(), seatId, concertOpenDate);
 
-        boolean exists = activeQueueRedisRepository.exists(token);
-
         entityManager.flush();
         entityManager.clear();
 
@@ -97,7 +95,6 @@ public class PaymentFacadeTest extends IntegrationTest {
         Reservation reservation = reservationJpaRepository.findById(savedReservation.getId()).get();
         assertAll(
                 () -> assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.RESERVED),
-                () -> assertThat(exists).isFalse(),
                 () -> assertThat(receipt.concertName()).isEqualTo(savedConcert.getTitle()),
                 () -> assertThat(receipt.concertOpenDate()).isEqualTo(concertOpenDate),
                 () -> assertThat(receipt.seatPosition()).isEqualTo(1),

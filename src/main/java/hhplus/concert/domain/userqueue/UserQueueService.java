@@ -72,4 +72,9 @@ public class UserQueueService {
         }
     }
 
+    @Transactional
+    public void deleteActiveToken(String token) {
+        userQueueRepository.deleteActiveToken(token);
+    }
+
 }

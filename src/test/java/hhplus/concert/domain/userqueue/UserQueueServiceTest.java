@@ -68,7 +68,26 @@ class UserQueueServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 대기열_토큰에_없을_경우_대기순번_0을_반환한다() {
+    void 대기열_토큰에_존재하지_않고_활성화_토큰에_있을_경우_0을_반환한다() {
+        // given
+        Long userId = 1L;
+        Long userWaitingNumber = 51L;
+        Long concertScheduleId = 1L;
+        String token = "token";
+        UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(userId, userWaitingNumber);
+        UserQueueService userQueueService = new UserQueueService(concertRepository, userQueueRepository, userQueueTokenProvider, userQueueConstant);
+
+        activeQueueRedisRepository.add(token, concertScheduleId);
+
+        // when
+        Long number = userQueueService.selectWaitingNumber(token, concertScheduleId);
+
+        // then
+        assertThat(number).isEqualTo(0);
+    }
+
+    @Test
+    void 대기열_토큰과_활성화_토큰에도_없을_경우_예외가_발생한다() {
         // given
         Long userId = 1L;
         Long userWaitingNumber = 51L;
@@ -76,11 +95,10 @@ class UserQueueServiceTest extends IntegrationTest {
         UserQueueTokenProvider userQueueTokenProvider = new UuidUserQueueTokenProviderTest(userId, userWaitingNumber);
         UserQueueService userQueueService = new UserQueueService(concertRepository, userQueueRepository, userQueueTokenProvider, userQueueConstant);
 
-        // when
-        Long waitingNumber = userQueueService.selectWaitingNumber("", concertScheduleId);
-
-        // then
-        assertThat(waitingNumber).isEqualTo(0L);
+        // when & then
+        assertThatThrownBy(() -> userQueueService.selectWaitingNumber("", concertScheduleId))
+            .isInstanceOf(ApiException.class)
+            .hasMessage("유효하지 않은 토큰입니다.");
     }
 
     @Test
