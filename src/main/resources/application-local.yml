@@ -42,3 +42,12 @@ logging:
 user-queue:
   max-waiting-number: 1000
   queue-token-expire-time: 10 # minute
+
+kafka:
+  bootstrapAddress: localhost:9090
+  max:
+    request:
+      size: 3072000 # 3MB
+  topics:
+    concert:
+      payment: concert.local.payment
