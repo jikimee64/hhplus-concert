@@ -44,7 +44,13 @@ kafka:
   bootstrapAddress: localhost:9090
   max:
     request:
-      size: 3072000
+      size: 3072000 # 3MB
   topics:
     concert:
-      payment: concert.local.payment
+      payment: concert.local.payment.topic
+  groups:
+    concert:
+      payment: concert.local.payment.group
+  consumer-cnt:
+    concert:
+      payment: 1
