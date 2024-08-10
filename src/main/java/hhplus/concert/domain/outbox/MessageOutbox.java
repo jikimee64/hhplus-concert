@@ -1,5 +1,6 @@
 package hhplus.concert.domain.outbox;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hhplus.concert.support.converter.JsonConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -77,6 +78,10 @@ public class MessageOutbox {
         this.messageStatus = MessageStatus.SEND_FAIL;
         this.updatedAt = now;
         this.errorMessage = errorMessage;
+    }
+
+    public <T> T getPayloadAs(ObjectMapper objectMapper, Class<T> clazz) {
+        return objectMapper.convertValue(this.payload, clazz);
     }
 
 }

@@ -2,19 +2,17 @@ package hhplus.concert.support.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Converter
+@Component
+@RequiredArgsConstructor
 public class JsonConverter implements AttributeConverter<Object, String> {
 
     private final ObjectMapper objectMapper;
-
-    public JsonConverter() {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-    }
 
     @Override
     public String convertToDatabaseColumn(Object attribute) {

@@ -1,11 +1,13 @@
 package hhplus.concert.domain.userqueue;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ActiveTokenDeleteEvent {
 
-    private final String token;
+    private String token;
     private Long messageOutboxId;
 
     public ActiveTokenDeleteEvent(String token) {
