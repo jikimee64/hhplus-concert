@@ -1,6 +1,7 @@
 package hhplus.concert.interfaces.consumer;
 
-import hhplus.concert.support.dto.ProducerDto;
+import hhplus.concert.infra.producer.dto.KafkaPayment;
+import hhplus.concert.infra.producer.dto.KafkaToken;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +29,29 @@ public class KafkaConsumerConfig {
     @Value("${kafka.consumer-cnt.concert.payment}")
     Integer paymentCnt;
 
+    @Value("${kafka.groups.concert.token}")
+    String tokenGroup;
+
+    @Value("${kafka.consumer-cnt.concert.token}")
+    Integer tokenCnt;
+
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ProducerDto> paymentConsumerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, ProducerDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory(bootstrapServers, paymentGroup, ProducerDto.class));
+    public ConcurrentKafkaListenerContainerFactory<String, KafkaPayment> paymentConsumerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, KafkaPayment> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory(bootstrapServers, paymentGroup, KafkaPayment.class));
         factory.setConcurrency(paymentCnt); /// consumer 를 처리하는 Thread 개수로 Partition에 할당 됨.
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE); // 메시지를 수신하자마자 ACK(acknowledge)를 처리
+        factory.getContainerProperties().setPollTimeout(10000);
+
+        log.info("카프카 컨슈머 그룹 생성 완료 : {}", paymentGroup);
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, KafkaToken> tokenConsumerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, KafkaToken> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory(bootstrapServers, tokenGroup, KafkaToken.class));
+        factory.setConcurrency(tokenCnt); /// consumer 를 처리하는 Thread 개수로 Partition에 할당 됨.
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE); // 메시지를 수신하자마자 ACK(acknowledge)를 처리
         factory.getContainerProperties().setPollTimeout(10000);
 

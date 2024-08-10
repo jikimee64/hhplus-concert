@@ -45,6 +45,7 @@ public class PaymentService {
         paymentEventPublisher.publishActiveTokenDelete(new ActiveTokenDeleteEvent(token));
         paymentEventPublisher.publishPaymentResult(
             new PaymentSendResultEvent(
+                savedPayment.getId(),
                 userId,
                 concertSchedule.getConcert().getTitle(),
                 concertSchedule.getOpenDate(),

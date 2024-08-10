@@ -1,7 +1,8 @@
-package hhplus.concert.interfaces.external;
+package hhplus.concert.interfaces.event.payment;
 
-import hhplus.concert.application.external.PaymentSendResultEventFacade;
 import hhplus.concert.domain.pay.PaymentSendResultEvent;
+import hhplus.concert.infra.producer.KafkaProducer;
+import hhplus.concert.infra.producer.dto.KafkaPayment;
 import hhplus.concert.interfaces.event.RetryableEventListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class PaymentSendResultEventListener extends RetryableEventListener<PaymentSendResultEvent> {
 
-    private final PaymentSendResultEventFacade paymentSendResultEventFacade;
+    private final KafkaProducer kafkaProducer;
 
     @Async("threadPoolTaskExecutor")
     @TransactionalEventListener(
@@ -28,6 +29,19 @@ public class PaymentSendResultEventListener extends RetryableEventListener<Payme
 
     @Override
     protected void handleEvent(PaymentSendResultEvent event) {
-        paymentSendResultEventFacade.sendPaymentResult(event);
+        kafkaProducer.producePayment(
+            new KafkaPayment(
+                event.getPaymentId(),
+                event.getUserId(),
+                event.getConcertTitle(),
+                event.getConcertOpenDate(),
+                event.getConcertStartAt(),
+                event.getConcertEndAt(),
+                event.getSeatAmount(),
+                event.getSeatPosition(),
+                event.getReservedAt(),
+                event.getPaymentedAt()
+            )
+        );
     }
 }

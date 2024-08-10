@@ -1,7 +1,8 @@
 package hhplus.concert.interfaces.event.userqueue;
 
-import hhplus.concert.application.event.ActiveTokenDeleteEventFacade;
 import hhplus.concert.domain.userqueue.ActiveTokenDeleteEvent;
+import hhplus.concert.infra.producer.KafkaProducer;
+import hhplus.concert.infra.producer.dto.KafkaToken;
 import hhplus.concert.interfaces.event.RetryableEventListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class ActiveTokenDeleteEventListener extends RetryableEventListener<ActiveTokenDeleteEvent> {
 
-    private final ActiveTokenDeleteEventFacade activeTokenDeleteEventFacade;
+    private final KafkaProducer kafkaProducer;
 
     @Async("threadPoolTaskExecutor")
     @TransactionalEventListener(
@@ -28,7 +29,9 @@ public class ActiveTokenDeleteEventListener extends RetryableEventListener<Activ
 
     @Override
     protected void handleEvent(ActiveTokenDeleteEvent event) {
-        activeTokenDeleteEventFacade.deleteActiveToken(event.getToken());
+        kafkaProducer.produceActiveToken(
+            new KafkaToken(event.getToken())
+        );
     }
 
 }
