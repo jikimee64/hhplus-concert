@@ -50,10 +50,6 @@ public class ConcertFinder {
                 ));
     }
 
-    /**
-     * TODO: 테이블에 좌석 정보가 없는 것은 id와 amount를 0으로 전달하여 프론트에서 처리?
-     * 그럼 프론트에서 좌석 데이터를 관리해야 하는 것인가?
-     */
     private List<SeatDto> generateSeatDtos(Integer totalSeat, Map<Integer, SeatQueryDto> seatQueryDtos) {
         return IntStream.rangeClosed(1, totalSeat)
                 .mapToObj(i -> Optional.ofNullable(seatQueryDtos.get(i))

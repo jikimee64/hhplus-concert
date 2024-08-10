@@ -131,4 +131,8 @@ public class Reservation {
     public Integer getSeatAmount() {
         return seatAmount;
     }
+
+    public LocalDateTime getReservedAt() {
+        return reservedAt;
+    }
 }
