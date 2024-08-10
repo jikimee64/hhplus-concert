@@ -12,8 +12,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        generate_statistics: true
-        session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 300
+    #        generate_statistics: true
+    #        session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 300
     defer-datasource-initialization: true
   datasource:
     driver-class-name: org.h2.Driver
@@ -30,14 +30,14 @@ spring:
     console:
       enabled: true
 
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.orm.jdbc.bind: TRACE
-    org.hibernate.SQL_SLOW: INFO
-    org.hibernate.stat: DEBUG
-    org.springframework.orm: DEBUG
-    org.springframework.transaction: DEBUG
+#logging:
+#  level:
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.orm.jdbc.bind: TRACE
+#    org.hibernate.SQL_SLOW: INFO
+#    org.hibernate.stat: DEBUG
+#    org.springframework.orm: DEBUG
+#    org.springframework.transaction: DEBUG
 
 user-queue:
   max-waiting-number: 1000
@@ -50,4 +50,10 @@ kafka:
       size: 3072000 # 3MB
   topics:
     concert:
-      payment: concert.local.payment
+      payment: concert.local.payment.topic
+  groups:
+    concert:
+      payment: concert.local.payment.group
+  consumer-cnt:
+    concert:
+      payment: 1
