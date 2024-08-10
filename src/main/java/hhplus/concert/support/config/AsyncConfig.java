@@ -3,6 +3,7 @@ package hhplus.concert.support.config;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import java.lang.reflect.Method;
+import java.util.concurrent.Executor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.logging.LogLevel;
@@ -11,8 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import java.util.concurrent.Executor;
 
 @Slf4j
 @EnableAsync
@@ -26,6 +25,8 @@ public class AsyncConfig extends AsyncConfigurerSupport {
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(500);
         executor.setThreadNamePrefix("Executor-");
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(10);
         executor.initialize();
         return executor;
     }

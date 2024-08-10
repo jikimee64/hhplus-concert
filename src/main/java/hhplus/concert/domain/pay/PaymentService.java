@@ -4,12 +4,16 @@ import hhplus.concert.domain.concert.ConcertRepository;
 import hhplus.concert.domain.concert.ConcertSchedule;
 import hhplus.concert.domain.concert.Reservation;
 import hhplus.concert.domain.concert.ReservationStatus;
+import hhplus.concert.domain.outbox.EventType;
+import hhplus.concert.domain.outbox.MessageOutbox;
+import hhplus.concert.domain.outbox.MessageOutboxRepository;
 import hhplus.concert.domain.pay.dto.Receipt;
 import hhplus.concert.domain.user.User;
 import hhplus.concert.domain.user.UserRepository;
 import hhplus.concert.domain.userqueue.ActiveTokenDeleteEvent;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
+import hhplus.concert.support.constant.ConcertTopic;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,7 @@ public class PaymentService {
     private final ConcertRepository concertRepository;
     private final PaymentRepository paymentRepository;
     private final PaymentEventPublisher paymentEventPublisher;
+    private final MessageOutboxRepository messageOutboxRepository;
 
     public Receipt pay(String token, Long userId, Long concertScheduleId, Long seatId, LocalDate concertOpenDate) {
         User user = userRepository.findById(userId);
@@ -42,20 +47,41 @@ public class PaymentService {
 
         Payment savedPayment = savePayment(userId, selectedReservation);
 
-        paymentEventPublisher.publishActiveTokenDelete(new ActiveTokenDeleteEvent(token));
-        paymentEventPublisher.publishPaymentResult(
-            new PaymentSendResultEvent(
-                savedPayment.getId(),
-                userId,
-                concertSchedule.getConcert().getTitle(),
-                concertSchedule.getOpenDate(),
-                concertSchedule.getStartAt(),
-                concertSchedule.getEndAt(),
-                selectedReservation.getSeatAmount(),
-                selectedReservation.getSeatPosition(),
-                selectedReservation.getReservedAt(),
-                savedPayment.getCreatedAt()
+        ActiveTokenDeleteEvent activeTokenDeleteEvent = new ActiveTokenDeleteEvent(token);
+        MessageOutbox tokenMessageOutbox = messageOutboxRepository.save(
+            MessageOutbox.createMessage(
+                ConcertTopic.token,
+                EventType.ACTIVE_TOKEN_DELETE,
+                token,
+                activeTokenDeleteEvent
             )
+        );
+        activeTokenDeleteEvent.setMessageOutboxId(tokenMessageOutbox.getId());
+        paymentEventPublisher.publishActiveTokenDelete(activeTokenDeleteEvent);
+
+        PaymentSendResultEvent paymentSendResultEvent = new PaymentSendResultEvent(
+            savedPayment.getId(),
+            userId,
+            concertSchedule.getConcert().getTitle(),
+            concertSchedule.getOpenDate(),
+            concertSchedule.getStartAt(),
+            concertSchedule.getEndAt(),
+            selectedReservation.getSeatAmount(),
+            selectedReservation.getSeatPosition(),
+            selectedReservation.getReservedAt(),
+            savedPayment.getCreatedAt()
+        );
+        MessageOutbox paymentMessageOutbox = messageOutboxRepository.save(
+            MessageOutbox.createMessage(
+                ConcertTopic.payment,
+                EventType.SEND_PAYMENT_RESULT,
+                String.valueOf(paymentSendResultEvent.getPaymentId()),
+                paymentSendResultEvent
+            )
+        );
+        paymentSendResultEvent.setMessageOutboxId(paymentMessageOutbox.getId());
+        paymentEventPublisher.publishPaymentResult(
+            paymentSendResultEvent
         );
 
         return new Receipt(
