@@ -1,10 +1,10 @@
 package hhplus.concert.interfaces.event.userqueue;
 
 import hhplus.concert.domain.outbox.MessageOutbox;
-import hhplus.concert.domain.outbox.MessageOutboxRepository;
+import hhplus.concert.domain.outbox.MessageOutboxReader;
 import hhplus.concert.domain.userqueue.ActiveTokenDeleteEvent;
-import hhplus.concert.infra.producer.KafkaProducer;
-import hhplus.concert.infra.producer.dto.KafkaToken;
+import hhplus.concert.domain.userqueue.ActiveTokenPublisher;
+import hhplus.concert.infra.producer.kafka.dto.PublisherTokenMessage;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.interfaces.event.RetryableEventListener;
@@ -21,8 +21,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class ActiveTokenDeleteEventListener extends RetryableEventListener<ActiveTokenDeleteEvent> {
 
-    private final KafkaProducer kafkaProducer;
-    private final MessageOutboxRepository messageOutboxRepository;
+    private final ActiveTokenPublisher activeTokenPublisher;
+    private final MessageOutboxReader messageOutboxReader;
 
     @Async("threadPoolTaskExecutor")
     @TransactionalEventListener(
@@ -35,14 +35,14 @@ public class ActiveTokenDeleteEventListener extends RetryableEventListener<Activ
 
     @Override
     protected void handleEvent(ActiveTokenDeleteEvent event) {
-        MessageOutbox messageOutbox = messageOutboxRepository.findById(event.getMessageOutboxId())
+        MessageOutbox messageOutbox = messageOutboxReader.findById(event.getMessageOutboxId())
             .orElseThrow(
                 () -> new ApiException(ErrorCode.E404, LogLevel.INFO, "MessageOutbox not found messageOutboxId = " + event.getMessageOutboxId()));
         try {
-            kafkaProducer.produceActiveToken(
-                new KafkaToken(event.getToken())
-            );
             messageOutbox.sendSuccess();
+            activeTokenPublisher.publishActiveToken(
+                new PublisherTokenMessage(event.getToken()), System.currentTimeMillis()
+            );
         } catch (Exception e) {
             log.error("Failed to send active token event to kafka", e);
             messageOutbox.sendFail(e.getMessage());

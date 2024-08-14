@@ -1,10 +1,11 @@
 package hhplus.concert.interfaces.event.payment;
 
 import hhplus.concert.domain.outbox.MessageOutbox;
-import hhplus.concert.domain.outbox.MessageOutboxRepository;
+import hhplus.concert.domain.outbox.MessageOutboxReader;
+import hhplus.concert.domain.pay.PaymentPublisher;
 import hhplus.concert.domain.pay.PaymentSendResultEvent;
-import hhplus.concert.infra.producer.KafkaProducer;
-import hhplus.concert.infra.producer.dto.KafkaPayment;
+import hhplus.concert.infra.producer.kafka.KafkaProducer;
+import hhplus.concert.infra.producer.kafka.dto.PublisherPaymentMessage;
 import hhplus.concert.interfaces.api.support.ApiException;
 import hhplus.concert.interfaces.api.support.error.ErrorCode;
 import hhplus.concert.interfaces.event.RetryableEventListener;
@@ -22,7 +23,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class PaymentSendResultEventListener extends RetryableEventListener<PaymentSendResultEvent> {
 
     private final KafkaProducer kafkaProducer;
-    private final MessageOutboxRepository messageOutboxRepository;
+    private final PaymentPublisher paymentPublisher;
+    private final MessageOutboxReader messageOutboxReader;
 
     @Async("threadPoolTaskExecutor")
     @TransactionalEventListener(
@@ -35,12 +37,13 @@ public class PaymentSendResultEventListener extends RetryableEventListener<Payme
 
     @Override
     protected void handleEvent(PaymentSendResultEvent event) {
-        MessageOutbox messageOutbox = messageOutboxRepository.findById(event.getMessageOutboxId())
+        MessageOutbox messageOutbox = messageOutboxReader.findById(event.getMessageOutboxId())
             .orElseThrow(
                 () -> new ApiException(ErrorCode.E404, LogLevel.INFO, "MessageOutbox not found messageOutboxId = " + event.getMessageOutboxId()));
         try {
-            kafkaProducer.producePayment(
-                new KafkaPayment(
+            messageOutbox.sendSuccess();
+            paymentPublisher.publishPayment(
+                new PublisherPaymentMessage(
                     event.getPaymentId(),
                     event.getUserId(),
                     event.getConcertTitle(),
@@ -51,9 +54,9 @@ public class PaymentSendResultEventListener extends RetryableEventListener<Payme
                     event.getSeatPosition(),
                     event.getReservedAt(),
                     event.getPaymentedAt()
-                )
+                ),
+                System.currentTimeMillis()
             );
-            messageOutbox.sendSuccess();
         } catch (Exception e) {
             log.error("Failed to send payment event to kafka", e);
             messageOutbox.sendFail(e.getMessage());

@@ -6,7 +6,7 @@ import hhplus.concert.domain.concert.Reservation;
 import hhplus.concert.domain.concert.ReservationStatus;
 import hhplus.concert.domain.outbox.EventType;
 import hhplus.concert.domain.outbox.MessageOutbox;
-import hhplus.concert.domain.outbox.MessageOutboxRepository;
+import hhplus.concert.domain.outbox.MessageOutboxWriter;
 import hhplus.concert.domain.pay.dto.Receipt;
 import hhplus.concert.domain.user.User;
 import hhplus.concert.domain.user.UserRepository;
@@ -30,7 +30,7 @@ public class PaymentService {
     private final ConcertRepository concertRepository;
     private final PaymentRepository paymentRepository;
     private final PaymentEventPublisher paymentEventPublisher;
-    private final MessageOutboxRepository messageOutboxRepository;
+    private final MessageOutboxWriter messageOutboxWriter;
 
     public Receipt pay(String token, Long userId, Long concertScheduleId, Long seatId, LocalDate concertOpenDate) {
         User user = userRepository.findById(userId);
@@ -48,7 +48,7 @@ public class PaymentService {
         Payment savedPayment = savePayment(userId, selectedReservation);
 
         ActiveTokenDeleteEvent activeTokenDeleteEvent = new ActiveTokenDeleteEvent(token);
-        MessageOutbox tokenMessageOutbox = messageOutboxRepository.save(
+        MessageOutbox tokenMessageOutbox = messageOutboxWriter.save(
             MessageOutbox.createMessage(
                 ConcertTopic.token,
                 EventType.ACTIVE_TOKEN_DELETE,
@@ -71,7 +71,7 @@ public class PaymentService {
             selectedReservation.getReservedAt(),
             savedPayment.getCreatedAt()
         );
-        MessageOutbox paymentMessageOutbox = messageOutboxRepository.save(
+        MessageOutbox paymentMessageOutbox = messageOutboxWriter.save(
             MessageOutbox.createMessage(
                 ConcertTopic.payment,
                 EventType.SEND_PAYMENT_RESULT,

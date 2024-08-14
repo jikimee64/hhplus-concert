@@ -3,7 +3,7 @@ package hhplus.concert.interfaces.scheduler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hhplus.concert.domain.outbox.EventType;
 import hhplus.concert.domain.outbox.MessageOutbox;
-import hhplus.concert.domain.outbox.MessageOutboxService;
+import hhplus.concert.domain.outbox.MessageOutboxReader;
 import hhplus.concert.domain.outbox.MessageStatus;
 import hhplus.concert.domain.pay.PaymentEventPublisher;
 import hhplus.concert.domain.pay.PaymentSendResultEvent;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KafkaEventScheduler {
 
-    private final MessageOutboxService messageOutboxService;
+    private final MessageOutboxReader messageOutboxReader;
     private final PaymentEventPublisher paymentEventPublisher;
     private final ObjectMapper objectMapper;
 
@@ -47,7 +47,7 @@ public class KafkaEventScheduler {
     }
 
     private void processRetryMessages(String topic, EventType eventType, Consumer<MessageOutbox> messageProcessor) {
-        List<MessageOutbox> messageOutboxes = messageOutboxService.findAllBy(topic, eventType);
+        List<MessageOutbox> messageOutboxes = messageOutboxReader.findAllBy(topic, eventType);
         LocalDateTime tenMinutesAgo = LocalDateTime.now().minusMinutes(10);
 
         for (MessageOutbox messageOutbox : messageOutboxes) {

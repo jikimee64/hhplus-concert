@@ -1,7 +1,6 @@
-package hhplus.concert.infra.producer;
+package hhplus.concert.infra.producer.kafka;
 
-import hhplus.concert.infra.producer.dto.KafkaPayment;
-import hhplus.concert.infra.producer.dto.KafkaToken;
+import hhplus.concert.infra.producer.kafka.dto.KafkaMessage;
 import hhplus.concert.support.constant.ConcertTopic;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,33 +15,35 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KafkaProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, KafkaMessage> kafkaTemplate;
 
-    public void produceActiveToken(KafkaToken kafkaToken) {
+    public void produceActiveToken(KafkaMessage kafkaMessage) {
         try {
-            Message<KafkaToken> message = MessageBuilder
-                .withPayload(kafkaToken)
-                .setHeader(KafkaHeaders.TOPIC, ConcertTopic.payment)
-                .setHeader(KafkaHeaders.KEY, kafkaToken.getToken())
+            Message<KafkaMessage> message = MessageBuilder
+                .withPayload(kafkaMessage)
+                .setHeader(KafkaHeaders.TOPIC, ConcertTopic.token)
+                .setHeader(KafkaHeaders.KEY, kafkaMessage.getEventKey())
                 .build();
 
             kafkaTemplate.send(message);
         } catch (Exception e) {
             log.error(">>> [ALARM] Kafka produceActiveToken Send Error= {}" + e);
+            throw e;
         }
     }
 
-    public void producePayment(KafkaPayment kafkaPayment) {
+    public void producePayment(KafkaMessage kafkaMessage) {
         try {
-            Message<KafkaPayment> message = MessageBuilder
-                .withPayload(kafkaPayment)
-                .setHeader(KafkaHeaders.TOPIC, ConcertTopic.token)
-                .setHeader(KafkaHeaders.KEY, kafkaPayment.getKey())
+            Message<KafkaMessage> message = MessageBuilder
+                .withPayload(kafkaMessage)
+                .setHeader(KafkaHeaders.TOPIC, ConcertTopic.payment)
+                .setHeader(KafkaHeaders.KEY, kafkaMessage.getEventKey())
                 .build();
 
             kafkaTemplate.send(message);
         } catch (Exception e) {
             log.error(">>> [ALARM] Kafka producePayment Send Error= {}" + e);
+            throw e;
         }
     }
 

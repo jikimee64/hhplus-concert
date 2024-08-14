@@ -55,7 +55,7 @@ kafka:
   groups:
     concert:
       payment: concert.local.payment.group
-      token: concert.local.token.topic
+      token: concert.local.token.group
   consumer-cnt:
     concert:
       payment: 1

@@ -1,7 +1,10 @@
 package hhplus.concert.interfaces.consumer;
 
-import hhplus.concert.infra.producer.dto.KafkaPayment;
-import hhplus.concert.infra.producer.dto.KafkaToken;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hhplus.concert.infra.producer.kafka.dto.KafkaMessage;
+import hhplus.concert.infra.producer.kafka.dto.PublisherPaymentMessage;
+import hhplus.concert.infra.producer.kafka.dto.PublisherTokenMessage;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -36,32 +39,34 @@ public class KafkaConsumerConfig {
     Integer tokenCnt;
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, KafkaPayment> paymentConsumerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, KafkaPayment> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory(bootstrapServers, paymentGroup, KafkaPayment.class));
+    public ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> tokenConsumerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory(bootstrapServers, paymentGroup, KafkaMessage.class, PublisherTokenMessage.class));
         factory.setConcurrency(paymentCnt); /// consumer 를 처리하는 Thread 개수로 Partition에 할당 됨.
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE); // 메시지를 수신하자마자 ACK(acknowledge)를 처리
         factory.getContainerProperties().setPollTimeout(10000);
 
-        log.info("카프카 컨슈머 그룹 생성 완료 : {}", paymentGroup);
+        log.info("카프카 토큰 컨슈머 그룹 생성 완료 : {}", paymentGroup);
         return factory;
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, KafkaToken> tokenConsumerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, KafkaToken> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory(bootstrapServers, tokenGroup, KafkaToken.class));
-        factory.setConcurrency(tokenCnt); /// consumer 를 처리하는 Thread 개수로 Partition에 할당 됨.
+    public ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> paymentConsumerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory(bootstrapServers, paymentGroup, KafkaMessage.class, PublisherPaymentMessage.class));
+        factory.setConcurrency(paymentCnt); /// consumer 를 처리하는 Thread 개수로 Partition에 할당 됨.
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE); // 메시지를 수신하자마자 ACK(acknowledge)를 처리
         factory.getContainerProperties().setPollTimeout(10000);
 
-        log.info("카프카 컨슈머 그룹 생성 완료 : {}", paymentGroup);
+        log.info("카프카 결제 컨슈머 그룹 생성 완료 : {}", paymentGroup);
         return factory;
     }
 
-    private ConsumerFactory consumerFactory(String bootstrapAddress, String groupId, Class clazz) {
+    private ConsumerFactory consumerFactory(String bootstrapAddress, String groupId, Class clazz, Class payloadClazz) {
         Map<String, Object> props = consumerConfig(bootstrapAddress, groupId);
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(clazz, false));
+        ObjectMapper om = new ObjectMapper();
+        JavaType type = om.getTypeFactory().constructParametricType(clazz, payloadClazz);
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<KafkaMessage>(type, om, false));
     }
 
     private Map<String, Object> consumerConfig(String bootstrapAddress, String groupId) {
