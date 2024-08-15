@@ -3,6 +3,11 @@ package hhplus.concert.domain.outbox;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import hhplus.concert.domain.userqueue.ActiveTokenDeleteEvent;
 import hhplus.concert.infra.producer.kafka.dto.PublisherTokenMessage;
 import org.junit.jupiter.api.Test;
 
@@ -86,6 +91,29 @@ class MessageOutboxTest {
             () -> assertThat(messageOutbox.getUpdatedAt()).isNotNull()
         );
 
+    }
+
+    @Test
+    void messageOutbox_payload_조회() {
+        ObjectMapper objectMapper = JsonMapper.builder()
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .build()
+            .registerModule(new JavaTimeModule());
+
+        String topic = "topic";
+        EventType eventType = EventType.ACTIVE_TOKEN_DELETE;
+        String messageKey = "message";
+        String token = "token";
+        PublisherTokenMessage publisherTokenMessage = new PublisherTokenMessage(token);
+        MessageOutbox messageOutbox = MessageOutbox.createMessage(
+            topic,
+            eventType,
+            messageKey,
+            publisherTokenMessage
+        );
+
+        ActiveTokenDeleteEvent event = messageOutbox.getPayloadAs(objectMapper, ActiveTokenDeleteEvent.class);
+        assertThat(event.getToken()).isEqualTo("token");
     }
 
 }

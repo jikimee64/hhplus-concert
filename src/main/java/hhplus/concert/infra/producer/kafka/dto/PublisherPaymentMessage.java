@@ -22,8 +22,4 @@ public class PublisherPaymentMessage {
     private LocalDateTime reservedAt;
     private LocalDateTime paymentDate;
 
-    public String getKey() {
-        return String.valueOf(id);
-    }
-
 }

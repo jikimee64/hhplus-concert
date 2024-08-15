@@ -1,4 +1,4 @@
-package hhplus.concert.interfaces.api.support;
+package hhplus.concert.support.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
